@@ -12,16 +12,16 @@ class InitialDatabaseSchema extends Migration {
      */
     public function up() {
         Schema::table('users', function (Blueprint $table) {
-            $table->string('username')->unique();
-            $table->string('surname');
+            $table->string('username')->unique()->nullable();
+            $table->string('surname')->nullable();
             $table->string('email')->change();
-            $table->string('phone');
-            $table->string('address');
-            $table->string('postcode');
-            $table->enum('document_type', array('identity_card', 'passport'));
-            $table->string('document_id');
+            $table->string('phone')->nullable();
+            $table->string('address')->nullable();
+            $table->string('postcode')->nullable();
+            $table->enum('document_type', array('identity_card', 'passport'))->nullable();
+            $table->string('document_id')->nullable();
             $table->date('birthdate')->nullable();
-            $table->enum('account_type', array('receptionist', 'patient', 'admin', 'doctor', 'nurse'));
+            $table->enum('account_type', array('receptionist', 'patient', 'admin', 'doctor', 'nurse'))->nullable();
         });
 
         Schema::create('appointments', function (Blueprint $table) {
@@ -29,6 +29,7 @@ class InitialDatabaseSchema extends Migration {
             $table->dateTime('start_time');
             $table->dateTime('end_time');
             $table->string('location');
+            $table->string('notes');
             $table->integer('patient_id')->unsigned();
             $table->foreign('patient_id')->references('id')->on('users');
             $table->integer('doctor_or_nurse_id')->unsigned();
@@ -36,7 +37,7 @@ class InitialDatabaseSchema extends Migration {
             $table->timestamps();
         });
 
-        Schema::create('work_schedule', function (Blueprint $table) {
+        Schema::create('schedules', function (Blueprint $table) {
             $table->increments('id');
             $table->time('start_time');
             $table->time('end_time');
@@ -86,6 +87,10 @@ class InitialDatabaseSchema extends Migration {
      * @return void
      */
     public function down() {
-        //
+        Schema::drop('users');
+        Schema::drop('appointments');
+        Schema::drop('schedules');
+        Schema::drop('prescriptions');
+        Schema::drop('tests');
     }
 }

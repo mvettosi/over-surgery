@@ -47,8 +47,14 @@ class RegisterController extends Controller {
     protected function validator(array $data) {
         return Validator::make($data, [
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:6|confirmed',
+            'surname' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255',
+            'phone' => 'required|numeric|phone',
+            'address' => 'required|string|max:600',
+            'postcode' => 'required|string|max:255',
+            'document_type' => 'in:identity_card,passport',
+            'document_id' => 'required|string|max:255',
+            'birthdate' => 'required|date',
         ]);
     }
 
@@ -59,10 +65,32 @@ class RegisterController extends Controller {
      * @return \App\Models\User
      */
     protected function create(array $data) {
+        $password = $this->getPassword();
         return User::create([
             'name' => $data['name'],
+            'surname' => $data['surname'],
             'email' => $data['email'],
-            'password' => Hash::make($data['password']),
+            'phone' => $data['phone'],
+            'address' => $data['address'],
+            'postcode' => $data['postcode'],
+            'document_type' => $data['document_type'],
+            'document_id' => $data['document_id'],
+            'birthdate' => $data['birthdate'],
+            'account_type' => 'patient',
+            'username' => $this->getUsername($data['name'], $data['surname']),
+            'password' => Hash::make($password),
         ]);
+    }
+
+    protected function getUsername($name, $surname) {
+        $username = Str::slug($name . $surname);
+        $userRows = User::whereRaw("username REGEXP '^{$username}([0-9]*)?$'")->get();
+        $countUser = count($userRows) + 1;
+
+        return ($countUser > 1) ? "{$username}{$countUser}" : $username;
+    }
+
+    protected function getPassword() {
+        return str_random(8);
     }
 }

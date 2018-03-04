@@ -11,6 +11,11 @@
 |
  */
 
-Auth::routes();
+// Route::get('/{any}', 'HomeController@index')->where('any', '.*')->name('home');
 
-Route::get('/{any}', 'HomeController@index')->where('any', '.*')->name('home');
+Route::get('/', function () {
+    return view('welcome');
+});
+// Route::get('password/reset/{token}', 'Auth\ResetPasswordController@showResetForm')->name('password.request');
+// Route::post('password/reset', 'Auth\ResetPasswordController@postReset')->name('password.reset');
+Auth::routes();

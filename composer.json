@@ -1,7 +1,10 @@
 {
     "name": "laravel/laravel",
     "description": "The Laravel Framework.",
-    "keywords": ["framework", "laravel"],
+    "keywords": [
+        "framework",
+        "laravel"
+    ],
     "license": "MIT",
     "type": "project",
     "require": {
@@ -9,7 +12,8 @@
         "doctrine/dbal": "^2.6",
         "fideloper/proxy": "~4.0",
         "laravel/framework": "5.6.*",
-        "laravel/tinker": "~1.0"
+        "laravel/tinker": "~1.0",
+        "tymon/jwt-auth": "dev-develop"
     },
     "require-dev": {
         "filp/whoops": "~2.0",
@@ -35,8 +39,7 @@
     },
     "extra": {
         "laravel": {
-            "dont-discover": [
-            ]
+            "dont-discover": []
         }
     },
     "scripts": {

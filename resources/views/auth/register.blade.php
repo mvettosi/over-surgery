@@ -87,7 +87,10 @@
                         </div> -->
 
                         <div class="form-group row justify-content-around">
-                            <div class="col-md-6">
+                            <div class="col-md-3">
+                                <button type="button" class="btn btn-primary" id="datepicker">Birthdate</button>
+                            </div>
+                            <div class="col-md-3">
                                 <select class="custom-select">
                                     <option selected>Document type</option>
                                     <option value="identity_card">Identity Card</option>

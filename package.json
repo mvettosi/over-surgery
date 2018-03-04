@@ -20,6 +20,9 @@
         "vue": "^2.5.7"
     },
     "dependencies": {
+        "ajv": "^6.0.0",
+        "md-date-time-picker": "^2.3.0",
+        "moment": "^2.20.1",
         "vuetify": "^1.0.3"
     }
 }

@@ -6,8 +6,10 @@
  */
 
 require('./bootstrap');
+require('moment');
 
 window.Vue = require('vue');
+mdDateTimePicker = require('md-date-time-picker');
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
@@ -20,3 +22,11 @@ Vue.component('example-component', require('./components/ExampleComponent.vue'))
 const app = new Vue({
     el: '#app'
 });
+
+var dialog = new mdDateTimePicker.default({
+    type: 'date'
+  });
+  var toggleButton = document.getElementById('datepicker');
+  toggleButton.addEventListener('click', function() {
+    dialog.toggle();
+  });

@@ -7,7 +7,6 @@ import Dashboard from './components/Dashboard.vue';
 import Home from './components/Home.vue';
 import Register from './components/Register.vue';
 import Login from './components/Login.vue';
-import SendReset from './components/SendReset.vue';
 Vue.use(VueRouter);
 Vue.use(VueAxios, axios);
 axios.defaults.baseURL = 'http://over-surgery.test/api';
@@ -27,13 +26,6 @@ const router = new VueRouter({
         path: '/login',
         name: 'login',
         component: Login,
-        meta: {
-            auth: false
-        }
-    }, {
-        path: '/sendReset',
-        name: 'sendReset',
-        component: SendReset,
         meta: {
             auth: false
         }

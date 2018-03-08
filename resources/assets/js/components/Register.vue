@@ -1,5 +1,41 @@
 <template>
-    <div>
+  <v-app id="login">
+    <v-content>
+      <v-container fluid fill-height>
+        <v-layout align-center justify-center>
+          <v-flex xs12 sm8 md5>
+            <v-card class="elevation-12">
+              <v-toolbar>
+                <v-toolbar-title class="mx-auto">OverSurgery</v-toolbar-title>
+              </v-toolbar>
+              <div class="alert alert-danger" v-if="error && !success">
+                <p>There was an error, unable to complete registration.</p>
+              </div>
+              <div class="alert alert-success" v-if="success">
+                <p>Registration completed. You can now
+                  <router-link :to="{name:'login'}">sign in.</router-link>
+                </p>
+              </div>
+              <v-form @submit.prevent="register" v-if="!success" method="post">
+                <v-card-text>
+                  <v-text-field prepend-icon="person" name="name" label="Name" type="text" v-model="name" required></v-text-field>
+                  <v-text-field prepend-icon="email" name="email" label="E-mail" type="text" v-model="email" required></v-text-field>
+                  <v-text-field prepend-icon="lock" name="password" label="Password" id="password" type="password" v-model="password" required></v-text-field>
+                </v-card-text>
+                <v-card-actions>
+                  <v-btn flat :to="{ name: 'login' }" color="primary">Back to login</v-btn>
+                  <v-spacer></v-spacer>
+                  <v-btn type="submit" color="primary" class="text-lg-right">Register</v-btn>
+                </v-card-actions>
+                <v-divider></v-divider>
+              </v-form>
+            </v-card>
+          </v-flex>
+        </v-layout>
+      </v-container>
+    </v-content>
+  </v-app>
+  <!-- <div>
         <div class="alert alert-danger" v-if="error && !success">
             <p>There was an error, unable to complete registration.</p>
         </div>
@@ -23,8 +59,9 @@
                 <span class="help-block" v-if="error && errors.password">{{ errors.password }}</span>
             </div>
             <button type="submit" class="btn btn-default">Submit</button>
+            <router-link :to="{ name: 'login' }">Login</router-link>
         </form>
-    </div>
+    </div> -->
 </template>
 <script>
 export default {

@@ -1137,11 +1137,19 @@ module.exports = Cancel;
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["a"] = ({
   data: function data() {
     return {
       name: "",
+      surname: "",
       email: "",
       password: "",
       error: false,
@@ -1150,12 +1158,20 @@ module.exports = Cancel;
     };
   },
 
+  computed: {
+    columnize: function columnize() {
+      var binding = {};
+      if (this.$vuetify.breakpoint.smAndDown) binding.column = true;
+      return binding;
+    }
+  },
   methods: {
     register: function register() {
       var app = this;
       this.$auth.register({
         params: {
           name: app.name,
+          surname: app.surname,
           email: app.email,
           password: app.password
         },
@@ -33966,22 +33982,70 @@ var render = function() {
                                   _c(
                                     "v-card-text",
                                     [
-                                      _c("v-text-field", {
-                                        attrs: {
-                                          "prepend-icon": "person",
-                                          name: "name",
-                                          label: "Name",
-                                          type: "text",
-                                          required: ""
-                                        },
-                                        model: {
-                                          value: _vm.name,
-                                          callback: function($$v) {
-                                            _vm.name = $$v
+                                      _c(
+                                        "v-layout",
+                                        _vm._b(
+                                          {
+                                            attrs: {
+                                              row: "",
+                                              "justify-space-between": ""
+                                            }
                                           },
-                                          expression: "name"
-                                        }
-                                      }),
+                                          "v-layout",
+                                          _vm.columnize,
+                                          false
+                                        ),
+                                        [
+                                          _c(
+                                            "v-flex",
+                                            { attrs: { xs12: "", md5: "" } },
+                                            [
+                                              _c("v-text-field", {
+                                                attrs: {
+                                                  "prepend-icon": "person",
+                                                  name: "name",
+                                                  label: "Name",
+                                                  type: "text",
+                                                  required: ""
+                                                },
+                                                model: {
+                                                  value: _vm.name,
+                                                  callback: function($$v) {
+                                                    _vm.name = $$v
+                                                  },
+                                                  expression: "name"
+                                                }
+                                              })
+                                            ],
+                                            1
+                                          ),
+                                          _vm._v(" "),
+                                          _c(
+                                            "v-flex",
+                                            { attrs: { xs12: "", md6: "" } },
+                                            [
+                                              _c("v-text-field", {
+                                                attrs: {
+                                                  "prepend-icon": "person",
+                                                  name: "surname",
+                                                  label: "Surname",
+                                                  type: "text",
+                                                  required: ""
+                                                },
+                                                model: {
+                                                  value: _vm.surname,
+                                                  callback: function($$v) {
+                                                    _vm.surname = $$v
+                                                  },
+                                                  expression: "surname"
+                                                }
+                                              })
+                                            ],
+                                            1
+                                          )
+                                        ],
+                                        1
+                                      ),
                                       _vm._v(" "),
                                       _c("v-text-field", {
                                         attrs: {

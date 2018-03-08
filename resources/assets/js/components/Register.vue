@@ -18,7 +18,14 @@
               </div>
               <v-form @submit.prevent="register" v-if="!success" method="post">
                 <v-card-text>
-                  <v-text-field prepend-icon="person" name="name" label="Name" type="text" v-model="name" required></v-text-field>
+                  <v-layout row justify-space-between v-bind="columnize">
+                    <v-flex xs12 md5>
+                      <v-text-field prepend-icon="person" name="name" label="Name" type="text" v-model="name" required></v-text-field>
+                    </v-flex>
+                    <v-flex xs12 md6>
+                      <v-text-field prepend-icon="person" name="surname" label="Surname" type="text" v-model="surname" required></v-text-field>
+                    </v-flex>
+                  </v-layout>
                   <v-text-field prepend-icon="email" name="email" label="E-mail" type="text" v-model="email" required></v-text-field>
                   <v-text-field prepend-icon="lock" name="password" label="Password" id="password" type="password" v-model="password" required></v-text-field>
                 </v-card-text>
@@ -68,6 +75,7 @@ export default {
   data() {
     return {
       name: "",
+      surname: "",
       email: "",
       password: "",
       error: false,
@@ -75,12 +83,20 @@ export default {
       success: false
     };
   },
+  computed: {
+    columnize() {
+      const binding = {};
+      if (this.$vuetify.breakpoint.smAndDown) binding.column = true;
+      return binding;
+    }
+  },
   methods: {
     register() {
       var app = this;
       this.$auth.register({
         params: {
           name: app.name,
+          surname: app.surname,
           email: app.email,
           password: app.password
         },

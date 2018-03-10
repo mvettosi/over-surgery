@@ -10,6 +10,8 @@ import App from './App.vue';
 import Home from './components/Home.vue';
 import Register from './components/Register.vue';
 import Login from './components/Login.vue';
+import Dashboard from './components/Dashboard.vue';
+import Availability from './components/Availability.vue';
 
 // Css
 import 'vuetify/dist/vuetify.min.css';
@@ -19,10 +21,13 @@ Vue.use(VueRouter);
 Vue.use(VueAxios, axios);
 Vue.use(Vuetify, {
     theme: {
-        primary: '#29a79c',
-        secondary: '#b0bec5',
-        accent: '#8c9eff',
-        error: '#b71c1c'
+        primary: "#009688",
+        secondary: "#B2DFDB",
+        accent: "#90A4AE",
+        error: "#FB8C00",
+        warning: "#FFB74D",
+        info: "#4DB6AC",
+        success: "#78909C"
     }
 })
 
@@ -55,7 +60,24 @@ const router = new VueRouter({
         component: Home,
         meta: {
             auth: true
-        }
+        },
+        children: [
+            {
+                path: '/dashboard',
+                name: 'dashboard',
+                component: Dashboard,
+                meta: {
+                    auth: true
+                }
+            }, {
+                path: '/availability',
+                name: 'availability',
+                component: Availability,
+                meta: {
+                    auth: true
+                }
+            }
+        ]
     }]
 });
 Vue.router = router;
@@ -65,16 +87,8 @@ Vue.use(require('@websanova/vue-auth'), {
     router: require('@websanova/vue-auth/drivers/router/vue-router.2.x.js'),
 });
 App.router = Vue.router;
-console.log(App);
 new Vue({
     el: '#app',
     router,
-    data() {
-        return {
-            bgc: {
-                backgroundColor: '#29a79c'
-            }
-        }
-    },
     render: h => h(App)
 });

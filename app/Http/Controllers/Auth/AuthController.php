@@ -16,18 +16,26 @@ use Mail;
 class AuthController extends Controller {
     public function register(RegisterFormRequest $request) {
         $user = new User;
-        $user->email = $request->email;
         $user->name = $request->name;
         $user->surname = $request->surname;
+        $user->email = $request->email;
+        $user->phone = $request->phone;
+        $user->address = $request->address;
+        $user->postcode = $request->postcode;
+        $user->birthdate = $request->birthdate;
+        $user->document_id = $request->docid;
+        $user->document_type = $request->doctype;
+        $user->account_type = "patient";
 
         $username = $this->getUsername($request->name, $request->surname);
         $password = $this->getPassword();
         $user->username = $username;
         $user->password = bcrypt($password);
+        
+        $user->save();
 
         Mail::to($request->email)->send(new RegistrationCompleted($username, $password));
 
-        $user->save();
         return response([
             'status' => 'success',
             'data' => $user,
@@ -35,7 +43,7 @@ class AuthController extends Controller {
     }
 
     public function login(Request $request) {
-        $credentials = $request->only('email', 'password');
+        $credentials = $request->only('username', 'password');
         if (!$token = JWTAuth::attempt($credentials)) {
             return response([
                 'status' => 'error',

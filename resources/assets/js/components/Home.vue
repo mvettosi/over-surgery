@@ -47,9 +47,16 @@
             <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
             <v-toolbar-title>Topics</v-toolbar-title>
             <v-spacer></v-spacer>
-            <v-btn icon>
-                <v-icon>more_vert</v-icon>
-            </v-btn>
+            <v-menu bottom left>
+                <v-btn icon slot="activator">
+                    <v-icon>more_vert</v-icon>
+                </v-btn>
+                <v-list>
+                    <v-list-tile v-for="(menu, i) in menus" :key="i" @click="menuAction(menu.title)">
+                        <v-list-tile-title>{{ menu.title }}</v-list-tile-title>
+                    </v-list-tile>
+                </v-list>
+            </v-menu>
         </v-toolbar>
         <v-content>
             <v-container fluid>
@@ -57,38 +64,6 @@
             </v-container>
         </v-content>
     </v-app>
-    <!-- <v-app light>
-        <v-navigation-drawer :clipped="clipped" v-model="drawer" enable-resize-watcher app class="white">
-            <v-list>
-                <v-list-group v-for="item in items" :value="item.active" :key="item.title">
-                    <v-list-tile slot="item" :to="item.path == '#' ? '' : item.path" :exact="item.exact" class="yellow--text" active-class="red--text">
-                        <v-list-tile-action>
-                            <v-icon>{{ item.action }}</v-icon>
-                        </v-list-tile-action>
-                        <v-list-tile-content>
-                            <v-list-tile-title>{{ item.title }}</v-list-tile-title>
-                        </v-list-tile-content>
-                        <v-list-tile-action v-if="item.items.length > 0">
-                            <v-icon>keyboard_arrow_down</v-icon>
-                        </v-list-tile-action>
-                    </v-list-tile>
-                </v-list-group>
-            </v-list>
-        </v-navigation-drawer>
-        <v-toolbar fixed app :clipped-left="clipped">
-            <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
-            <v-toolbar-title>Topics</v-toolbar-title>
-            <v-spacer></v-spacer>
-            <v-btn icon>
-                <v-icon>more_vert</v-icon>
-            </v-btn>
-        </v-toolbar>
-        <v-content>
-            <v-container fluid>
-                <router-view></router-view>
-            </v-container>
-        </v-content>
-    </v-app> -->
 </template>
 <script>
 export default {
@@ -115,22 +90,22 @@ export default {
           path: "/calendar",
           role: "receptionist"
         }
-        // {
-        //   action: "local_activity",
-        //   title: "Attractions",
-        //   path: "/",
-        //   items: []
-        // },
-        // {
-        //   action: "restaurant",
-        //   title: "Breakfast",
-        //   path: "/breakfast",
-        //   items: []
-        // }
-        // { title: "Home", icon: "dashboard" },
-        // { title: "About", icon: "question_answer" }
+      ],
+      menus: [
+        {
+          title: "Logout"
+        }
       ]
     };
+  },
+  methods: {
+    menuAction(title) {
+      switch (title) {
+        case "Logout":
+          this.$auth.logout();
+          break;
+      }
+    }
   }
 };
 </script>

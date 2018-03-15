@@ -1139,31 +1139,6 @@ module.exports = Cancel;
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 
 /* harmony default export */ __webpack_exports__["a"] = ({
   data: function data() {
@@ -1185,22 +1160,21 @@ module.exports = Cancel;
         title: "Calendar",
         path: "/calendar",
         role: "receptionist"
-        // {
-        //   action: "local_activity",
-        //   title: "Attractions",
-        //   path: "/",
-        //   items: []
-        // },
-        // {
-        //   action: "restaurant",
-        //   title: "Breakfast",
-        //   path: "/breakfast",
-        //   items: []
-        // }
-        // { title: "Home", icon: "dashboard" },
-        // { title: "About", icon: "question_answer" }
+      }],
+      menus: [{
+        title: "Logout"
       }]
     };
+  },
+
+  methods: {
+    menuAction: function menuAction(title) {
+      switch (title) {
+        case "Logout":
+          this.$auth.logout();
+          break;
+      }
+    }
   }
 });
 
@@ -34073,9 +34047,35 @@ var render = function() {
           _c("v-spacer"),
           _vm._v(" "),
           _c(
-            "v-btn",
-            { attrs: { icon: "" } },
-            [_c("v-icon", [_vm._v("more_vert")])],
+            "v-menu",
+            { attrs: { bottom: "", left: "" } },
+            [
+              _c(
+                "v-btn",
+                { attrs: { slot: "activator", icon: "" }, slot: "activator" },
+                [_c("v-icon", [_vm._v("more_vert")])],
+                1
+              ),
+              _vm._v(" "),
+              _c(
+                "v-list",
+                _vm._l(_vm.menus, function(menu, i) {
+                  return _c(
+                    "v-list-tile",
+                    {
+                      key: i,
+                      on: {
+                        click: function($event) {
+                          _vm.menuAction(menu.title)
+                        }
+                      }
+                    },
+                    [_c("v-list-tile-title", [_vm._v(_vm._s(menu.title))])],
+                    1
+                  )
+                })
+              )
+            ],
             1
           )
         ],
@@ -34981,11 +34981,14 @@ if (false) {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__node_modules_vue_loader_lib_template_compiler_index_id_data_v_1f65406d_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Dashboard_vue__ = __webpack_require__(50);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_runtime_component_normalizer__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__babel_loader_cacheDirectory_true_presets_env_modules_false_targets_browsers_2_uglify_true_plugins_transform_object_rest_spread_transform_runtime_polyfill_false_helpers_false_node_modules_vue_loader_lib_selector_type_script_index_0_Dashboard_vue__ = __webpack_require__(67);
+/* unused harmony namespace reexport */
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_1f65406d_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Dashboard_vue__ = __webpack_require__(50);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__node_modules_vue_loader_lib_runtime_component_normalizer__ = __webpack_require__(1);
 var disposed = false
 /* script */
-var __vue_script__ = null
+
+
 /* template */
 
 /* template functional */
@@ -34997,10 +35000,10 @@ var __vue_scopeId__ = null
 /* moduleIdentifier (server only) */
 var __vue_module_identifier__ = null
 
-var Component = Object(__WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_runtime_component_normalizer__["a" /* default */])(
-  __vue_script__,
-  __WEBPACK_IMPORTED_MODULE_0__node_modules_vue_loader_lib_template_compiler_index_id_data_v_1f65406d_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Dashboard_vue__["a" /* render */],
-  __WEBPACK_IMPORTED_MODULE_0__node_modules_vue_loader_lib_template_compiler_index_id_data_v_1f65406d_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Dashboard_vue__["b" /* staticRenderFns */],
+var Component = Object(__WEBPACK_IMPORTED_MODULE_2__node_modules_vue_loader_lib_runtime_component_normalizer__["a" /* default */])(
+  __WEBPACK_IMPORTED_MODULE_0__babel_loader_cacheDirectory_true_presets_env_modules_false_targets_browsers_2_uglify_true_plugins_transform_object_rest_spread_transform_runtime_polyfill_false_helpers_false_node_modules_vue_loader_lib_selector_type_script_index_0_Dashboard_vue__["a" /* default */],
+  __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_1f65406d_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Dashboard_vue__["a" /* render */],
+  __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_1f65406d_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Dashboard_vue__["b" /* staticRenderFns */],
   __vue_template_functional__,
   __vue_styles__,
   __vue_scopeId__,
@@ -35038,11 +35041,457 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("v-app", [
-    _c("h1", [_vm._v("Dashboard")]),
-    _vm._v(" "),
-    _c("p", [_vm._v(_vm._s(_vm.$auth.user()))])
-  ])
+  return _c(
+    "v-app",
+    { staticClass: "teal" },
+    [
+      _c(
+        "v-container",
+        { attrs: { "grid-list-md": "" } },
+        [
+          _c(
+            "v-layout",
+            { attrs: { row: "", wrap: "" } },
+            [
+              _c(
+                "v-flex",
+                { attrs: { xs12: "", sm6: "" } },
+                [
+                  _c(
+                    "v-card",
+                    { attrs: { height: "100%", to: "/availability" } },
+                    [
+                      _c(
+                        "v-container",
+                        { attrs: { "grid-list-md": "" } },
+                        [
+                          _c(
+                            "v-layout",
+                            { attrs: { row: "", wrap: "" } },
+                            [
+                              _c(
+                                "v-flex",
+                                {
+                                  staticClass: "display-2",
+                                  attrs: { "align-start": "" }
+                                },
+                                [
+                                  _vm._v(
+                                    "\n                                Doctors:\n                            "
+                                  )
+                                ]
+                              )
+                            ],
+                            1
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "v-layout",
+                            {
+                              staticClass: "mb-3",
+                              attrs: { row: "", wrap: "" }
+                            },
+                            [
+                              _c(
+                                "v-flex",
+                                { staticClass: "headline", attrs: { xs6: "" } },
+                                [
+                                  _vm._v(
+                                    "\n                                " +
+                                      _vm._s(_vm.doctorsOnDuty) +
+                                      " on duty\n                            "
+                                  )
+                                ]
+                              ),
+                              _vm._v(" "),
+                              _c(
+                                "v-flex",
+                                { staticClass: "headline", attrs: { xs6: "" } },
+                                [
+                                  _vm._v(
+                                    "\n                                " +
+                                      _vm._s(_vm.doctorsAvailable) +
+                                      " available\n                            "
+                                  )
+                                ]
+                              )
+                            ],
+                            1
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "v-layout",
+                            {
+                              staticClass: "mt-3",
+                              attrs: { row: "", wrap: "" }
+                            },
+                            [
+                              _c(
+                                "v-flex",
+                                {
+                                  staticClass: "display-2",
+                                  attrs: { "align-start": "" }
+                                },
+                                [
+                                  _vm._v(
+                                    "\n                                Nurses:\n                            "
+                                  )
+                                ]
+                              )
+                            ],
+                            1
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "v-layout",
+                            { attrs: { row: "", wrap: "" } },
+                            [
+                              _c(
+                                "v-flex",
+                                { staticClass: "headline", attrs: { xs6: "" } },
+                                [
+                                  _vm._v(
+                                    "\n                                " +
+                                      _vm._s(_vm.nursesOnDuty) +
+                                      " on duty\n                            "
+                                  )
+                                ]
+                              ),
+                              _vm._v(" "),
+                              _c(
+                                "v-flex",
+                                { staticClass: "headline", attrs: { xs6: "" } },
+                                [
+                                  _vm._v(
+                                    "\n                                " +
+                                      _vm._s(_vm.nursesAvailable) +
+                                      " available\n                            "
+                                  )
+                                ]
+                              )
+                            ],
+                            1
+                          )
+                        ],
+                        1
+                      )
+                    ],
+                    1
+                  )
+                ],
+                1
+              ),
+              _vm._v(" "),
+              _c(
+                "v-flex",
+                { attrs: { xs12: "", sm6: "" } },
+                [
+                  _c(
+                    "v-card",
+                    { attrs: { height: "100%" } },
+                    [
+                      _c(
+                        "v-container",
+                        {
+                          attrs: {
+                            "grid-list-md": "",
+                            "fill-height": !_vm.appointmentsThisMonth > 0
+                          }
+                        },
+                        [
+                          _c(
+                            "v-layout",
+                            {
+                              attrs: {
+                                row: "",
+                                wrap: "",
+                                "align-center": !_vm.appointmentsThisMonth > 0
+                              }
+                            },
+                            [
+                              _c(
+                                "v-flex",
+                                {
+                                  staticClass: "display-1",
+                                  attrs: { "align-start": "" }
+                                },
+                                [
+                                  _vm._v(
+                                    "\n                                " +
+                                      _vm._s(_vm.appointmentsThisMonth) +
+                                      " appointments this month\n                            "
+                                  )
+                                ]
+                              )
+                            ],
+                            1
+                          ),
+                          _vm._v(" "),
+                          _vm.appointmentsThisMonth > 0
+                            ? _c(
+                                "v-layout",
+                                {
+                                  staticClass: "mt-3",
+                                  attrs: { row: "", wrap: "" }
+                                },
+                                [
+                                  _c(
+                                    "v-flex",
+                                    {
+                                      staticClass: "headline",
+                                      attrs: { xs12: "" }
+                                    },
+                                    [
+                                      _vm._v(
+                                        "\n                                Next Appointment:\n                            "
+                                      )
+                                    ]
+                                  ),
+                                  _vm._v(" "),
+                                  _c(
+                                    "v-flex",
+                                    {
+                                      staticClass: "headline",
+                                      attrs: { xs1: "" }
+                                    },
+                                    [_c("v-icon", [_vm._v("event")])],
+                                    1
+                                  ),
+                                  _vm._v(" "),
+                                  _c(
+                                    "v-flex",
+                                    {
+                                      staticClass: "headline",
+                                      attrs: { xs5: "" }
+                                    },
+                                    [
+                                      _vm._v(
+                                        "\n                                " +
+                                          _vm._s(_vm.nextAppDate) +
+                                          "\n                            "
+                                      )
+                                    ]
+                                  ),
+                                  _vm._v(" "),
+                                  _c(
+                                    "v-flex",
+                                    {
+                                      staticClass: "headline",
+                                      attrs: { xs1: "" }
+                                    },
+                                    [_c("v-icon", [_vm._v("schedule")])],
+                                    1
+                                  ),
+                                  _vm._v(" "),
+                                  _c(
+                                    "v-flex",
+                                    {
+                                      staticClass: "headline",
+                                      attrs: { xs5: "" }
+                                    },
+                                    [
+                                      _vm._v(
+                                        "\n                                " +
+                                          _vm._s(_vm.nextAppTime) +
+                                          "\n                            "
+                                      )
+                                    ]
+                                  ),
+                                  _vm._v(" "),
+                                  _c(
+                                    "v-flex",
+                                    {
+                                      staticClass: "headline",
+                                      attrs: { xs1: "" }
+                                    },
+                                    [_c("v-icon", [_vm._v("place")])],
+                                    1
+                                  ),
+                                  _vm._v(" "),
+                                  _c(
+                                    "v-flex",
+                                    {
+                                      staticClass: "headline",
+                                      attrs: { xs5: "" }
+                                    },
+                                    [
+                                      _vm._v(
+                                        "\n                                " +
+                                          _vm._s(_vm.nextAppLocation) +
+                                          "\n                            "
+                                      )
+                                    ]
+                                  ),
+                                  _vm._v(" "),
+                                  _c(
+                                    "v-flex",
+                                    {
+                                      staticClass: "headline",
+                                      attrs: { xs1: "" }
+                                    },
+                                    [_c("v-icon", [_vm._v("person")])],
+                                    1
+                                  ),
+                                  _vm._v(" "),
+                                  _c(
+                                    "v-flex",
+                                    {
+                                      staticClass: "headline",
+                                      attrs: { xs5: "" }
+                                    },
+                                    [
+                                      _vm._v(
+                                        "\n                                " +
+                                          _vm._s(_vm.nextAppDoctor) +
+                                          "\n                            "
+                                      )
+                                    ]
+                                  )
+                                ],
+                                1
+                              )
+                            : _vm._e()
+                        ],
+                        1
+                      )
+                    ],
+                    1
+                  )
+                ],
+                1
+              )
+            ],
+            1
+          ),
+          _vm._v(" "),
+          _c(
+            "v-layout",
+            { attrs: { row: "", wrap: "" } },
+            [
+              _c(
+                "v-flex",
+                { attrs: { xs12: "", sm6: "" } },
+                [
+                  _c(
+                    "v-card",
+                    { attrs: { height: "100%" } },
+                    [
+                      _c(
+                        "v-container",
+                        { attrs: { "grid-list-md": "" } },
+                        [
+                          _c(
+                            "v-layout",
+                            { attrs: { row: "", wrap: "" } },
+                            [
+                              _c(
+                                "v-flex",
+                                {
+                                  staticClass: "headline my-3",
+                                  attrs: { xs12: "" }
+                                },
+                                [
+                                  _vm._v(
+                                    "\n                                " +
+                                      _vm._s(_vm.prescriptions) +
+                                      " Prescriptions\n                            "
+                                  )
+                                ]
+                              ),
+                              _vm._v(" "),
+                              _c(
+                                "v-flex",
+                                {
+                                  staticClass: "headline my-3",
+                                  attrs: { xs12: "" }
+                                },
+                                [
+                                  _vm._v(
+                                    "\n                                " +
+                                      _vm._s(_vm.expiringPrescriptions) +
+                                      " about to expire!\n                            "
+                                  )
+                                ]
+                              )
+                            ],
+                            1
+                          )
+                        ],
+                        1
+                      )
+                    ],
+                    1
+                  )
+                ],
+                1
+              ),
+              _vm._v(" "),
+              _c(
+                "v-flex",
+                { attrs: { xs12: "", sm6: "" } },
+                [
+                  _c(
+                    "v-card",
+                    { attrs: { height: "100%" } },
+                    [
+                      _c(
+                        "v-container",
+                        { attrs: { "grid-list-md": "", "fill-height": "" } },
+                        [
+                          _c(
+                            "v-layout",
+                            {
+                              attrs: { row: "", wrap: "", "align-center": "" }
+                            },
+                            [
+                              _vm.newTests > 0
+                                ? _c(
+                                    "v-flex",
+                                    {
+                                      staticClass: "headline my-3",
+                                      attrs: { xs12: "" }
+                                    },
+                                    [
+                                      _vm._v(
+                                        "\n                                " +
+                                          _vm._s(_vm.newTests) +
+                                          " NEW test results!\n                            "
+                                      )
+                                    ]
+                                  )
+                                : _c(
+                                    "v-flex",
+                                    {
+                                      staticClass: "headline my-3",
+                                      attrs: { xs12: "" }
+                                    },
+                                    [
+                                      _vm._v(
+                                        "\n                                No new test results\n                            "
+                                      )
+                                    ]
+                                  )
+                            ],
+                            1
+                          )
+                        ],
+                        1
+                      )
+                    ],
+                    1
+                  )
+                ],
+                1
+              )
+            ],
+            1
+          )
+        ],
+        1
+      )
+    ],
+    1
+  )
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -36786,6 +37235,142 @@ module.exports = {
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
+
+/***/ }),
+/* 66 */,
+/* 67 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["a"] = ({
+  data: function data() {
+    return {
+      doctorsOnDuty: 0,
+      doctorsAvailable: 0,
+      nursesOnDuty: 0,
+      nursesAvailable: 0,
+      appointmentsThisMonth: 1,
+      nextAppDate: "20/02/2018",
+      nextAppTime: "3:00 pm",
+      nextAppLocation: "12 King Street, Cambridge",
+      nextAppDoctor: "John Heope",
+      prescriptions: 0,
+      expiringPrescriptions: 0,
+      newTests: 0
+    };
+  }
+});
 
 /***/ })
 /******/ ]);

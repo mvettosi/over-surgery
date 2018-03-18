@@ -14,10 +14,22 @@ use Faker\Generator as Faker;
  */
 
 $factory->define(App\Models\User::class, function (Faker $faker) {
+    $name = $faker->firstName;
+    $surname = $faker->lastName;
+    $username = strtolower($name . "." . $surname);
     return [
-        'name' => $faker->name,
-        'email' => $faker->unique()->safeEmail,
+        'username' => $username,
         'password' => '$2y$10$TKh8H1.PfQx37YgCzwiKb.KjNyWgaHb9cbcoQgdIVFlYg7B77UdFm', // secret
+        'name' => $name,
+        'surname' => $surname,
+        'email' => $faker->unique()->safeEmail,
+        'phone' => $faker->phoneNumber,
+        'address' => $faker->address,
+        'postcode' => $faker->postcode,
+        'document_type' => $faker->randomElement(array('identity_card', 'passport')),
+        'document_id' => str_random(10),
+        'birthdate' => $faker->date,
+        'account_type' => $faker->unique()->randomElement(array('receptionist', 'patient', 'admin', 'doctor', 'nurse')),
         'remember_token' => str_random(10),
     ];
 });

@@ -23,6 +23,8 @@ Route::group(['middleware' => 'jwt.auth'], function () {
     Route::get('auth/user', 'Auth\AuthController@user');
     Route::post('auth/logout', 'Auth\AuthController@logout');
 });
+Route::resource('appointments', 'AppointmentController');
+Route::resource('users', 'UserController');
 Route::group(['middleware' => 'jwt.refresh'], function () {
     Route::get('auth/refresh', 'Auth\AuthController@refresh');
 });

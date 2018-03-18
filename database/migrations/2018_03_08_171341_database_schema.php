@@ -54,13 +54,7 @@ class DatabaseSchema extends Migration {
             $table->time('end_time');
             $table->date('start_date');
             $table->date('end_date');
-            $table->boolean('mon');
-            $table->boolean('tue');
-            $table->boolean('wed');
-            $table->boolean('thu');
-            $table->boolean('fri');
-            $table->boolean('sat');
-            $table->boolean('sun');
+            $table->enum('day', array('mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'))->nullable();
             $table->integer('worker_id')->unsigned();
             $table->foreign('worker_id')->references('id')->on('users');
             $table->timestamps();
@@ -112,13 +106,13 @@ class DatabaseSchema extends Migration {
      * @return void
      */
     public function down() {
-        Schema::dropIfExists('users');
-        Schema::dropIfExists('password_resets');
-        Schema::dropIfExists('appointments');
-        Schema::dropIfExists('schedules');
+        Schema::dropIfExists('medication_prescription');
+        Schema::dropIfExists('medications');
         Schema::dropIfExists('prescriptions');
         Schema::dropIfExists('tests');
-        Schema::dropIfExists('medications');
-        Schema::dropIfExists('medication_prescription');
+        Schema::dropIfExists('schedules');
+        Schema::dropIfExists('appointments');
+        Schema::dropIfExists('password_resets');
+        Schema::dropIfExists('users');
     }
 }

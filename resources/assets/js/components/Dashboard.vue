@@ -112,19 +112,84 @@
 export default {
   data() {
     return {
+      // Staff on duty
       doctorsOnDuty: 0,
-      doctorsAvailable: 0,
       nursesOnDuty: 0,
+      // Staff Available
+      doctorsAvailable: 0,
       nursesAvailable: 0,
-      appointmentsThisMonth: 1,
-      nextAppDate: "20/02/2018",
-      nextAppTime: "3:00 pm",
-      nextAppLocation: "12 King Street, Cambridge",
-      nextAppDoctor: "John Heope",
+      // Appointments
+      appointmentsThisMonth: 0,
+      nextAppDate: "Loading...",
+      nextAppTime: "Loading...",
+      nextAppLocation: "Loading...",
+      nextAppDoctor: "Loading...",
+      // Prescriptions
       prescriptions: 0,
       expiringPrescriptions: 0,
-      newTests: 0
+      // Tests
+      newTests: 0,
+      //Errors
+      errors: []
     };
+  },
+  created() {
+    this.fetchAppointments();
+  },
+  watch: {
+    $route: "fetchAppointments"
+  },
+  methods: {
+    fetchAppointments() {
+      this.appointmentsThisMonth = 0;
+      this.nextAppDate = "Loading...";
+      this.nextAppTime = "Loading...";
+      this.nextAppLocation = "Loading...";
+      this.nextAppDoctor = "Loading...";
+      this.axios
+        .get("/appointments?count=true&patientId=" + this.$auth.user().id)
+        .then(response => {
+          this.appointmentsThisMonth = response.data;
+        })
+        .catch(e => {
+          this.errors.push(e);
+        });
+      this.axios
+        .get("/appointments?first=true&patientId=" + this.$auth.user().id)
+        .then(response => {
+          var appDate = new Date(response.data.start_time);
+          this.nextAppDate = appDate
+            .toISOString()
+            .slice(0, 10)
+            .replace(/-/g, "/");
+          this.nextAppTime = this.getTimeString(appDate);
+          this.nextAppLocation = response.data.location;
+          this.axios
+            .get("/users/" + response.data.doctor_or_nurse_id)
+            .then(responseDoc => {
+              this.nextAppDoctor =
+                responseDoc.data.name + " " + responseDoc.data.surname;
+            })
+            .catch(e => {
+              this.errors.push(e);
+            });
+          this.nextAppDoctor = "?";
+        })
+        .catch(e => {
+          this.errors.push(e);
+        });
+    },
+    getTimeString(date) {
+      var ampm = "am";
+      var h = date.getHours();
+      var m = date.getMinutes();
+      if (h >= 12) {
+        if (h > 12) h -= 12;
+        ampm = "pm";
+      }
+      if (m < 10) m = "0" + m;
+      return h + ":" + m + " " + ampm;
+    }
   }
 };
 </script>

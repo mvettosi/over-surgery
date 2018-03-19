@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class UserController extends Controller {
@@ -11,8 +12,35 @@ class UserController extends Controller {
      *
      * @return \Illuminate\Http\Response
      */
-    public function index() {
-        //
+    public function index(Request $request) {
+        $query = User::query();
+
+        if ($request->input('account_type')) {
+            $query->where('account_type', '=', $request->input('account_type'));
+        }
+        if ($request->input('on_duty') || $request->input('available')) {
+            $query->whereHas('schedules', function ($internalQuery) {
+                $now = Carbon::now();
+                $internalQuery->where($now->format('D'), true)
+                    ->whereTime('start_time', '<=', $now->format('H:i'))
+                    ->whereTime('end_time', '>=', $now->format('H:i'));
+            });
+            if ($request->input('available')) {
+                $query->whereDoesntHave('appointments', function ($internalQuery) {
+                    $now = Carbon::now();
+                    $internalQuery->where('start_time', '<=', $now)
+                    ->where('end_time', '>=', $now);
+                });
+            }
+        }
+
+        if ($request->input('count')) {
+            return $query->count();
+        } else if ($request->input('first')) {
+            return $query->first();
+        } else {
+            return $query->get();
+        }
     }
 
     /**

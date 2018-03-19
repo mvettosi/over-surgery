@@ -25,6 +25,8 @@ Route::group(['middleware' => 'jwt.auth'], function () {
 });
 Route::resource('appointments', 'AppointmentController');
 Route::resource('users', 'UserController');
+Route::resource('prescriptions', 'PrescriptionController');
+Route::resource('tests', 'TestController');
 Route::group(['middleware' => 'jwt.refresh'], function () {
     Route::get('auth/refresh', 'Auth\AuthController@refresh');
 });

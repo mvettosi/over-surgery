@@ -135,6 +135,9 @@ export default {
   },
   created() {
     this.fetchAppointments();
+    this.fetchAvailability();
+    this.fetchPrescriptions();
+    this.fetchTests();
   },
   watch: {
     $route: "fetchAppointments"
@@ -147,7 +150,7 @@ export default {
       this.nextAppLocation = "Loading...";
       this.nextAppDoctor = "Loading...";
       this.axios
-        .get("/appointments?count=true&patientId=" + this.$auth.user().id)
+        .get("/appointments?count=true&patient_id=" + this.$auth.user().id)
         .then(response => {
           this.appointmentsThisMonth = response.data;
         })
@@ -155,7 +158,7 @@ export default {
           this.errors.push(e);
         });
       this.axios
-        .get("/appointments?first=true&patientId=" + this.$auth.user().id)
+        .get("/appointments?first=true&patient_id=" + this.$auth.user().id)
         .then(response => {
           var appDate = new Date(response.data.start_time);
           this.nextAppDate = appDate
@@ -174,6 +177,79 @@ export default {
               this.errors.push(e);
             });
           this.nextAppDoctor = "?";
+        })
+        .catch(e => {
+          this.errors.push(e);
+        });
+    },
+    fetchAvailability() {
+      this.doctorsOnDuty = 0;
+      this.nursesOnDuty = 0;
+      this.doctorsAvailable = 0;
+      this.nursesAvailable = 0;
+      this.axios
+        .get("/users?on_duty=true&count=true&account_type=doctor")
+        .then(response => {
+          this.doctorsOnDuty = response.data;
+        })
+        .catch(e => {
+          this.errors.push(e);
+        });
+      this.axios
+        .get("/users?on_duty=true&count=true&account_type=nurse")
+        .then(response => {
+          this.nursesOnDuty = response.data;
+        })
+        .catch(e => {
+          this.errors.push(e);
+        });
+      this.axios
+        .get("/users?available=true&count=true&account_type=doctor")
+        .then(response => {
+          this.doctorsAvailable = response.data;
+        })
+        .catch(e => {
+          this.errors.push(e);
+        });
+      this.axios
+        .get("/users?available=true&count=true&account_type=nurse")
+        .then(response => {
+          this.nursesAvailable = response.data;
+        })
+        .catch(e => {
+          this.errors.push(e);
+        });
+    },
+    fetchPrescriptions() {
+      this.prescriptions = 0;
+      this.expiringPrescriptions = 0;
+      this.axios
+        .get("/prescriptions?count=true&&patient_id=" + this.$auth.user().id)
+        .then(response => {
+          this.prescriptions = response.data;
+        })
+        .catch(e => {
+          this.errors.push(e);
+        });
+      this.axios
+        .get(
+          "/prescriptions?count=true&expiring=true&patient_id=" +
+            this.$auth.user().id
+        )
+        .then(response => {
+          this.expiringPrescriptions = response.data;
+        })
+        .catch(e => {
+          this.errors.push(e);
+        });
+    },
+    fetchTests() {
+      this.newTests = 0;
+      this.axios
+        .get("/tests?count=true&patient_id=" + this.$auth.user().id)
+        .then(response => {
+          debugger;
+          this.newTests = response.data;
         })
         .catch(e => {
           this.errors.push(e);

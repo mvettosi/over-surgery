@@ -54,9 +54,15 @@ class DatabaseSchema extends Migration {
             $table->time('end_time');
             $table->date('start_date');
             $table->date('end_date');
-            $table->enum('day', array('mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'))->nullable();
-            $table->integer('worker_id')->unsigned();
-            $table->foreign('worker_id')->references('id')->on('users');
+            $table->boolean('mon');
+            $table->boolean('tue');
+            $table->boolean('wed');
+            $table->boolean('thu');
+            $table->boolean('fri');
+            $table->boolean('sat');
+            $table->boolean('sun');
+            $table->integer('user_id')->unsigned();
+            $table->foreign('user_id')->references('id')->on('users');
             $table->timestamps();
         });
 
@@ -64,6 +70,7 @@ class DatabaseSchema extends Migration {
             $table->increments('id');
             $table->string('dose');
             $table->string('quantity');
+            $table->dateTime('expiration_date');
             $table->integer('patient_id')->unsigned();
             $table->foreign('patient_id')->references('id')->on('users');
             $table->integer('doctor_id')->unsigned();
@@ -81,6 +88,7 @@ class DatabaseSchema extends Migration {
             $table->foreign('patient_id')->references('id')->on('users');
             $table->integer('doctor_id')->unsigned();
             $table->foreign('doctor_id')->references('id')->on('users');
+            $table->boolean('checked')->default(false);
             $table->timestamps();
         });
 

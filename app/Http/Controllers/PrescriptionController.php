@@ -2,25 +2,30 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Appointment;
+use App\Models\Prescription;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
-class AppointmentController extends Controller {
+class PrescriptionController extends Controller {
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
     public function index(Request $request) {
-        $query = Appointment::query();
+        $query = Prescription::query();
+        $now = Carbon::now();
 
         if ($request->input('patient_id')) {
             $query->where('patient_id', '=', $request->input('patient_id'));
         }
-        if (!$request->input('includePast')) {
-            $query->where('start_time', '>=', date('Y-m-d H:i:s'));
+        if (!$request->input('include_expired')) {
+            $query->whereDate('expiration_date', '>=', $now->toDateString());
         }
-        $query->oldest('start_time');
+        if ($request->input('expiring')) {
+            $inThreeDays = $now->addDays(3);
+            $query->whereDate('expiration_date', '<=', $inThreeDays->toDateString());
+        }
 
         if ($request->input('count')) {
             return $query->count();
@@ -53,20 +58,20 @@ class AppointmentController extends Controller {
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Appointment  $appointment
+     * @param  \App\Models\Prescription  $prescription
      * @return \Illuminate\Http\Response
      */
-    public function show(Appointment $appointment) {
-        return $appointment;
+    public function show(Prescription $prescription) {
+        //
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Appointment  $appointment
+     * @param  \App\Models\Prescription  $prescription
      * @return \Illuminate\Http\Response
      */
-    public function edit(Appointment $appointment) {
+    public function edit(Prescription $prescription) {
         //
     }
 
@@ -74,20 +79,20 @@ class AppointmentController extends Controller {
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Appointment  $appointment
+     * @param  \App\Models\Prescription  $prescription
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Appointment $appointment) {
+    public function update(Request $request, Prescription $prescription) {
         //
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Appointment  $appointment
+     * @param  \App\Models\Prescription  $prescription
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Appointment $appointment) {
+    public function destroy(Prescription $prescription) {
         //
     }
 }

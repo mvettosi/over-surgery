@@ -1559,6 +1559,9 @@ module.exports = Cancel;
   },
   created: function created() {
     this.fetchAppointments();
+    this.fetchAvailability();
+    this.fetchPrescriptions();
+    this.fetchTests();
   },
 
   watch: {
@@ -1573,12 +1576,12 @@ module.exports = Cancel;
       this.nextAppTime = "Loading...";
       this.nextAppLocation = "Loading...";
       this.nextAppDoctor = "Loading...";
-      this.axios.get("/appointments?count=true&patientId=" + this.$auth.user().id).then(function (response) {
+      this.axios.get("/appointments?count=true&patient_id=" + this.$auth.user().id).then(function (response) {
         _this.appointmentsThisMonth = response.data;
       }).catch(function (e) {
         _this.errors.push(e);
       });
-      this.axios.get("/appointments?first=true&patientId=" + this.$auth.user().id).then(function (response) {
+      this.axios.get("/appointments?first=true&patient_id=" + this.$auth.user().id).then(function (response) {
         var appDate = new Date(response.data.start_time);
         _this.nextAppDate = appDate.toISOString().slice(0, 10).replace(/-/g, "/");
         _this.nextAppTime = _this.getTimeString(appDate);
@@ -1591,6 +1594,61 @@ module.exports = Cancel;
         _this.nextAppDoctor = "?";
       }).catch(function (e) {
         _this.errors.push(e);
+      });
+    },
+    fetchAvailability: function fetchAvailability() {
+      var _this2 = this;
+
+      this.doctorsOnDuty = 0;
+      this.nursesOnDuty = 0;
+      this.doctorsAvailable = 0;
+      this.nursesAvailable = 0;
+      this.axios.get("/users?on_duty=true&count=true&account_type=doctor").then(function (response) {
+        _this2.doctorsOnDuty = response.data;
+      }).catch(function (e) {
+        _this2.errors.push(e);
+      });
+      this.axios.get("/users?on_duty=true&count=true&account_type=nurse").then(function (response) {
+        _this2.nursesOnDuty = response.data;
+      }).catch(function (e) {
+        _this2.errors.push(e);
+      });
+      this.axios.get("/users?available=true&count=true&account_type=doctor").then(function (response) {
+        _this2.doctorsAvailable = response.data;
+      }).catch(function (e) {
+        _this2.errors.push(e);
+      });
+      this.axios.get("/users?available=true&count=true&account_type=nurse").then(function (response) {
+        _this2.nursesAvailable = response.data;
+      }).catch(function (e) {
+        _this2.errors.push(e);
+      });
+    },
+    fetchPrescriptions: function fetchPrescriptions() {
+      var _this3 = this;
+
+      this.prescriptions = 0;
+      this.expiringPrescriptions = 0;
+      this.axios.get("/prescriptions?count=true&&patient_id=" + this.$auth.user().id).then(function (response) {
+        _this3.prescriptions = response.data;
+      }).catch(function (e) {
+        _this3.errors.push(e);
+      });
+      this.axios.get("/prescriptions?count=true&expiring=true&patient_id=" + this.$auth.user().id).then(function (response) {
+        _this3.expiringPrescriptions = response.data;
+      }).catch(function (e) {
+        _this3.errors.push(e);
+      });
+    },
+    fetchTests: function fetchTests() {
+      var _this4 = this;
+
+      this.newTests = 0;
+      this.axios.get("/tests?count=true&patient_id=" + this.$auth.user().id).then(function (response) {
+        debugger;
+        _this4.newTests = response.data;
+      }).catch(function (e) {
+        _this4.errors.push(e);
       });
     },
     getTimeString: function getTimeString(date) {

@@ -44,4 +44,18 @@ class User extends Authenticatable implements JWTSubject {
     public function getJWTCustomClaims() {
         return [];
     }
+
+    /**
+     * Get the schedules for the user.
+     */
+    public function schedules() {
+        return $this->hasMany('App\Models\Schedule');
+    }
+
+    /**
+     * Get the appointments for the user.
+     */
+    public function appointments() {
+        return $this->hasMany('App\Models\Appointment', 'doctor_or_nurse_id');
+    }
 }

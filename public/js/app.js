@@ -1145,6 +1145,9 @@ module.exports = Cancel;
       }]
     };
   },
+  created: function created() {
+    this.$router.push("dashboard");
+  },
 
   methods: {
     menuAction: function menuAction(title) {
@@ -1645,7 +1648,6 @@ module.exports = Cancel;
 
       this.newTests = 0;
       this.axios.get("/tests?count=true&patient_id=" + this.$auth.user().id).then(function (response) {
-        debugger;
         _this4.newTests = response.data;
       }).catch(function (e) {
         _this4.errors.push(e);

@@ -248,7 +248,6 @@ export default {
       this.axios
         .get("/tests?count=true&patient_id=" + this.$auth.user().id)
         .then(response => {
-          debugger;
           this.newTests = response.data;
         })
         .catch(e => {

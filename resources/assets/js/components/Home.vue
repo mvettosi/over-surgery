@@ -77,6 +77,9 @@ export default {
       ]
     };
   },
+  created() {
+    this.$router.push("dashboard");
+  },
   methods: {
     menuAction(title) {
       switch (title) {

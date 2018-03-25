@@ -11,7 +11,7 @@
                 <v-flex xs5 sm3 md2 lg2 xl1>
                     <v-menu ref="menu" lazy :close-on-content-click="false" v-model="dateMenu" transition="scale-transition" offset-y full-width :nudge-right="40" min-width="290px">
                         <v-text-field slot="activator" prepend-icon="event" v-model="searchDate" readonly></v-text-field>
-                        <v-date-picker ref="picker" v-model="searchDate" @change="save" min="1950-01-01" :max="new Date().toISOString().substr(0, 10)"></v-date-picker>
+                        <v-date-picker ref="picker" v-model="searchDate"></v-date-picker>
                     </v-menu>
                 </v-flex>
             </v-layout>
@@ -170,7 +170,11 @@ export default {
       this.doctors = [];
       this.nurses = [];
       if (this.workerType == "doctor" || this.workerType == "both") {
-        var url = "/users?account_type=doctor&" + this.checkType + "=true";
+        var url =
+          "/users?account_type=doctor&" +
+          this.checkType +
+          "=true&date=" +
+          this.searchDate;
         this.axios
           .get(url)
           .then(response => {
@@ -181,7 +185,11 @@ export default {
           });
       }
       if (this.workerType == "nurse" || this.workerType == "both") {
-        var url = "/users?account_type=nurse&" + this.checkType + "=true";
+        var url =
+          "/users?account_type=nurse&" +
+          this.checkType +
+          "=true&date=" +
+          this.searchDate;
         this.axios
           .get(url)
           .then(response => {

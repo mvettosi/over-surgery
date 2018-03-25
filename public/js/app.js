@@ -1843,7 +1843,7 @@ module.exports = Cancel;
       this.doctors = [];
       this.nurses = [];
       if (this.workerType == "doctor" || this.workerType == "both") {
-        var url = "/users?account_type=doctor&" + this.checkType + "=true";
+        var url = "/users?account_type=doctor&" + this.checkType + "=true&date=" + this.searchDate;
         this.axios.get(url).then(function (response) {
           _this.doctors = response.data;
         }).catch(function (e) {
@@ -1851,7 +1851,7 @@ module.exports = Cancel;
         });
       }
       if (this.workerType == "nurse" || this.workerType == "both") {
-        var url = "/users?account_type=nurse&" + this.checkType + "=true";
+        var url = "/users?account_type=nurse&" + this.checkType + "=true&date=" + this.searchDate;
         this.axios.get(url).then(function (response) {
           _this.nurses = response.data;
         }).catch(function (e) {
@@ -37586,11 +37586,6 @@ var render = function() {
                       _vm._v(" "),
                       _c("v-date-picker", {
                         ref: "picker",
-                        attrs: {
-                          min: "1950-01-01",
-                          max: new Date().toISOString().substr(0, 10)
-                        },
-                        on: { change: _vm.save },
                         model: {
                           value: _vm.searchDate,
                           callback: function($$v) {

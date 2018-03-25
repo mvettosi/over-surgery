@@ -1,9 +1,9 @@
 <template>
-    <v-app class="teal">
+    <v-app>
         <v-container grid-list-md>
             <v-layout row wrap>
                 <v-flex xs12 sm6>
-                    <v-card height="100%" to="/availability">
+                    <v-card height="100%" to="/availability" class="pa-2" hover>
                         <v-container grid-list-md>
                             <v-layout row wrap>
                                 <v-flex class="display-2" align-start>
@@ -35,7 +35,7 @@
                     </v-card>
                 </v-flex>
                 <v-flex xs12 sm6>
-                    <v-card height="100%">
+                    <v-card height="100%" class="pa-2" hover>
                         <v-container grid-list-md :fill-height="!appointmentsThisMonth > 0">
                             <v-layout row wrap :align-center="!appointmentsThisMonth > 0">
                                 <v-flex class="display-1" align-start>
@@ -77,7 +77,7 @@
             </v-layout>
             <v-layout row wrap>
                 <v-flex xs12 sm6>
-                    <v-card height="100%">
+                    <v-card height="100%" class="pa-2" hover>
                         <v-container grid-list-md>
                             <v-layout row wrap>
                                 <v-flex xs12 class="headline my-3">
@@ -91,7 +91,7 @@
                     </v-card>
                 </v-flex>
                 <v-flex xs12 sm6>
-                    <v-card height="100%">
+                    <v-card height="100%" class="pa-2" hover>
                         <v-container grid-list-md fill-height>
                             <v-layout row wrap align-center>
                                 <v-flex xs12 class="headline my-3" v-if="newTests > 0">

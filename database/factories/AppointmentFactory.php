@@ -4,6 +4,7 @@ use Faker\Generator as Faker;
 
 $factory->define(App\Models\Appointment::class, function (Faker $faker) {
     $startTime = $faker->dateTimeBetween('-2 days', '+30 days');
+    $startTime->setTime($startTime->format('H'), 0, 0);
     $endTime = clone $startTime;
     $endTime->modify('+ 1 hour');
     return [

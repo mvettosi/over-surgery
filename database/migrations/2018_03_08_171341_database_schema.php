@@ -51,7 +51,7 @@ class DatabaseSchema extends Migration {
         Schema::create('schedules', function (Blueprint $table) {
             $table->increments('id');
             $table->time('start_time');
-            $table->time('end_time');
+            $table->tinyInteger('duration')->unsigned();
             $table->date('start_date');
             $table->date('end_date');
             $table->boolean('mon');

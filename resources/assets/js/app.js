@@ -4,6 +4,7 @@ import VueRouter from 'vue-router';
 import axios from 'axios';
 import VueAxios from 'vue-axios';
 import Vuetify from 'vuetify';
+import fullCalendar from 'vue-fullcalendar'
 
 // Components
 import App from './App.vue';
@@ -12,6 +13,7 @@ import Register from './components/Register.vue';
 import Login from './components/Login.vue';
 import Dashboard from './components/Dashboard.vue';
 import Availability from './components/Availability.vue';
+import Calendar from './components/Calendar.vue';
 
 // Css
 import 'vuetify/dist/vuetify.min.css';
@@ -29,7 +31,8 @@ Vue.use(Vuetify, {
         info: "#4DB6AC",
         success: "#78909C"
     }
-})
+});
+Vue.component('full-calendar', fullCalendar);
 
 axios.defaults.baseURL = 'http://over-surgery.test/api';
 const router = new VueRouter({
@@ -73,6 +76,13 @@ const router = new VueRouter({
                 path: '/availability',
                 name: 'availability',
                 component: Availability,
+                meta: {
+                    auth: true
+                }
+            }, {
+                path: '/calendar',
+                name: 'calendar',
+                component: Calendar,
                 meta: {
                     auth: true
                 }

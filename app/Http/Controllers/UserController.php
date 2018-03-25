@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Appointment;
+use App\Models\Schedule;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -14,33 +16,69 @@ class UserController extends Controller {
      */
     public function index(Request $request) {
         $query = User::query();
+        if ($request->input('date')) {
+            $searchDate = Carbon::createFromFormat('Y-m-d', $request->input('date'));
+        } else {
+            $searchDate = Carbon::today();
+        }
 
         if ($request->input('account_type')) {
             $query->where('account_type', '=', $request->input('account_type'));
         }
         if ($request->input('on_duty') || $request->input('available')) {
-            $query->whereHas('schedules', function ($internalQuery) {
-                $now = Carbon::now();
-                $internalQuery->where($now->format('D'), true)
-                    ->whereTime('start_time', '<=', $now->format('H:i'))
-                    ->whereTime('end_time', '>=', $now->format('H:i'));
+            $query->whereHas('schedules', function ($internalQuery) use ($searchDate) {
+                $internalQuery->where($searchDate->format('D'), true)
+                    ->whereDate('start_date', '<=', $searchDate)
+                    ->whereDate('end_date', '>=', $searchDate);
             });
             if ($request->input('available')) {
-                $query->whereDoesntHave('appointments', function ($internalQuery) {
-                    $now = Carbon::now();
-                    $internalQuery->where('start_time', '<=', $now)
-                    ->where('end_time', '>=', $now);
-                });
+                $query->withCount(['appointments' => function ($internalQuery) use ($searchDate) {
+                    $internalQuery->whereDate('start_time', $searchDate->format('Y-m-d'));
+                }]);
             }
         }
 
         if ($request->input('count')) {
-            return $query->count();
+            $result = $query->count();
         } else if ($request->input('first')) {
-            return $query->first();
+            $result = $query->first();
         } else {
-            return $query->get();
+            $result = $query->get();
         }
+
+        if ($request->input('available')) {
+            $filteredResult = [];
+            foreach ($result as $user) {
+                $schedules = Schedule::where('user_id', $user->id)
+                    ->where($searchDate->format('D'), true)
+                    ->whereDate('start_date', '<=', $searchDate)
+                    ->whereDate('end_date', '>=', $searchDate)->get();
+                $appointments = Appointment::where('doctor_or_nurse_id', $user->id)
+                    ->whereDate('start_time', $searchDate->format('Y-m-d'))->get();
+                $availableHours = [];
+                foreach ($schedules as $schedule) {
+                    $scheduleStart = Carbon::createFromFormat('H:i:s', $schedule->start_time)->hour;
+                    $availableHours = array_merge($availableHours, range($scheduleStart, $scheduleStart + $schedule->duration - 1));
+                }
+                foreach ($appointments as $appointment) {
+                    $bookedHour = Carbon::createFromFormat('Y-m-d H:i:s', $appointment->start_time)->hour;
+                    if (($key = array_search($bookedHour, $availableHours)) !== false) {
+                        unset($availableHours[$key]);
+                    }
+                }
+                if (!empty($availableHours)) {
+                    $temp = [];
+                    foreach ($availableHours as $hour) {
+                        array_push($temp, array('title' => $hour . ':00'));
+                    }
+                    $user->availableHours = $temp;
+                    $filteredResult[] = $user;
+                }
+            }
+            return $filteredResult;
+        }
+
+        return $result;
     }
 
     /**

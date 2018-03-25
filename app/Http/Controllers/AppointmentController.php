@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Appointment;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class AppointmentController extends Controller {
@@ -13,12 +14,22 @@ class AppointmentController extends Controller {
      */
     public function index(Request $request) {
         $query = Appointment::query();
+        if ($request->input('date')) {
+            $searchDate = Carbon::createFromFormat('Y-m-d', $request->input('date'));
+        } else {
+            $searchDate = Carbon::today();
+        }
 
         if ($request->input('patient_id')) {
             $query->where('patient_id', '=', $request->input('patient_id'));
         }
-        if (!$request->input('includePast')) {
-            $query->where('start_time', '>=', date('Y-m-d H:i:s'));
+        if ($request->input('doctor_or_nurse_id')) {
+            $query->where('doctor_or_nurse_id', '=', $request->input('doctor_or_nurse_id'));
+        }
+        if ($request->input('date')) {
+            $query->whereDate('start_time', $searchDate->format('Y-m-d'));
+        } else if (!$request->input('includePast')) {
+            $query->where('start_time', '>=', $searchDate);
         }
         $query->oldest('start_time');
 

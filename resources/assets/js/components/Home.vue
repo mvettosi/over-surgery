@@ -1,12 +1,15 @@
 <template>
     <v-app>
         <v-navigation-drawer :clipped="clipped" v-model="drawer" enable-resize-watcher app class="white">
-            <v-toolbar flat>
-                <v-list>
-                    <v-list-tile>
-                        <v-list-tile-title class="title">
-                            Application
-                        </v-list-tile-title>
+            <v-toolbar flat class="transparent">
+                <v-list class="pa-0">
+                    <v-list-tile avatar>
+                        <v-list-tile-avatar>
+                            <img src="images/man.jpg">
+                        </v-list-tile-avatar>
+                        <v-list-tile-content>
+                            <v-list-tile-title>{{ $auth.user().name }} {{ $auth.user().surname }}</v-list-tile-title>
+                        </v-list-tile-content>
                     </v-list-tile>
                 </v-list>
             </v-toolbar>
@@ -22,9 +25,9 @@
                 </v-list-tile>
             </v-list>
         </v-navigation-drawer>
-        <v-toolbar fixed app :clipped-left="clipped">
+        <v-toolbar fixed dark app :clipped-left="clipped" color="primary">
             <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
-            <v-toolbar-title>Topics</v-toolbar-title>
+            <v-toolbar-title class="white--text">Over Surgery</v-toolbar-title>
             <v-spacer></v-spacer>
             <v-menu bottom left>
                 <v-btn icon slot="activator">
@@ -78,7 +81,7 @@ export default {
     };
   },
   created() {
-    this.$router.push("dashboard");
+    this.$router.push("availability");
   },
   methods: {
     menuAction(title) {

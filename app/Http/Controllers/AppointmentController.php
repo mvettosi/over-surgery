@@ -20,9 +20,9 @@ class AppointmentController extends Controller {
     public function index(Request $request) {
         $query = Appointment::query();
         if ($request->input('date')) {
-            $searchDate = Carbon::createFromFormat('Y-m-d', $request->input('date'));
+            $searchDate = Carbon::createFromFormat('Y-m-d H:i:s', $request->input('date'));
         } else {
-            $searchDate = Carbon::today();
+            $searchDate = Carbon::now();
         }
 
         if ($request->input('patient_id')) {
@@ -60,9 +60,9 @@ class AppointmentController extends Controller {
                 $tempResult = $result;
             }
             foreach ($tempResult as $appointment) {
-                $hours = UserController::getAvailableHours($appointment->doctor, $searchDate);
+                $hours = UserController::getAvailableHours($appointment->doctor, Carbon::createFromFormat('Y-m-d H:i:s', $appointment->start_time));
                 if (!empty($hours)) {
-                    $appointment->doctor->availableHours = $hours;
+                    $appointment->doctorAvailableHours = $hours;
                 }
             }
             $result = $tempResult;
@@ -165,7 +165,7 @@ class AppointmentController extends Controller {
         }
         $appointment->save();
         return response()->json([
-            'message' => 'The appointment was successfully booked.',
+            'message' => 'The appointment was successfully modified.',
         ], 200);
     }
 

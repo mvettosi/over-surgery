@@ -140,14 +140,15 @@ export default {
       { text: "Doctors", value: "doctor" },
       { text: "Nurses", value: "nurse" }
     ];
-    var today = new Date().toJSON().slice(0, 10);
+    var now = new Date();
     return {
       checkType: checkTypesList[0].value,
       checkTypes: checkTypesList,
       workerType: workerTypesList[0].value,
       workerTypes: workerTypesList,
       dateMenu: false,
-      searchDate: today,
+      searchDate:
+        now.getFullYear() + "-" + (now.getMonth() + 1) + "-" + now.getDate(),
       doctors: [],
       nurses: [],
       errors: []

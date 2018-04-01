@@ -3287,14 +3287,14 @@ return /******/ (function(modules) { // webpackBootstrap
   data: function data() {
     var checkTypesList = [{ text: "Available", value: "available" }, { text: "On Duty", value: "on_duty" }];
     var workerTypesList = [{ text: "Doctors and Nurses", value: "both" }, { text: "Doctors", value: "doctor" }, { text: "Nurses", value: "nurse" }];
-    var today = new Date().toJSON().slice(0, 10);
+    var now = new Date();
     return {
       checkType: checkTypesList[0].value,
       checkTypes: checkTypesList,
       workerType: workerTypesList[0].value,
       workerTypes: workerTypesList,
       dateMenu: false,
-      searchDate: today,
+      searchDate: now.getFullYear() + "-" + (now.getMonth() + 1) + "-" + now.getDate(),
       doctors: [],
       nurses: [],
       errors: []
@@ -38410,7 +38410,7 @@ var render = function() {
                                       appointment.start_time
                                     ).toLocaleDateString()
                                   ) +
-                                  "\n                            "
+                                  "\n                        "
                               )
                             ],
                             1
@@ -38437,7 +38437,7 @@ var render = function() {
                                       " " +
                                       appointment.doctor.surname
                                   ) +
-                                  "\n                            "
+                                  "\n                        "
                               )
                             ],
                             1
@@ -38478,7 +38478,7 @@ var render = function() {
                                       _c(
                                         "v-list",
                                         _vm._l(
-                                          appointment.doctor.availableHours,
+                                          appointment.doctorAvailableHours,
                                           function(hours) {
                                             return _c(
                                               "v-list-tile",
@@ -38544,7 +38544,7 @@ var render = function() {
                                       hour12: true
                                     })
                                   ) +
-                                  "\n                            "
+                                  "\n                        "
                               )
                             ],
                             1
@@ -38567,7 +38567,7 @@ var render = function() {
                               _vm._v(
                                 "\n                            " +
                                   _vm._s(appointment.location) +
-                                  "\n                            "
+                                  "\n                        "
                               )
                             ],
                             1
@@ -38614,9 +38614,59 @@ var render = function() {
                             appointment.start_time
                           ).toLocaleDateString() !==
                           new Date().toLocaleDateString()
-                            ? _c("v-btn", { attrs: { color: "primary" } }, [
-                                _vm._v("Edit")
-                              ])
+                            ? _c(
+                                "v-menu",
+                                {
+                                  attrs: {
+                                    transition: "slide-y-transition",
+                                    bottom: ""
+                                  }
+                                },
+                                [
+                                  _c(
+                                    "v-btn",
+                                    {
+                                      attrs: {
+                                        slot: "activator",
+                                        color: "primary"
+                                      },
+                                      slot: "activator"
+                                    },
+                                    [_vm._v("Edit")]
+                                  ),
+                                  _vm._v(" "),
+                                  _c(
+                                    "v-list",
+                                    _vm._l(
+                                      appointment.doctorAvailableHours,
+                                      function(hours) {
+                                        return _c(
+                                          "v-list-tile",
+                                          {
+                                            key: hours.title,
+                                            on: {
+                                              click: function($event) {
+                                                _vm.editAppointment(
+                                                  appointment.id,
+                                                  appointment.doctor.id,
+                                                  hours.title
+                                                )
+                                              }
+                                            }
+                                          },
+                                          [
+                                            _c("v-list-tile-title", [
+                                              _vm._v(_vm._s(hours.title))
+                                            ])
+                                          ],
+                                          1
+                                        )
+                                      }
+                                    )
+                                  )
+                                ],
+                                1
+                              )
                             : _vm._e(),
                           _vm._v(" "),
                           _c("v-spacer"),
@@ -40394,6 +40444,9 @@ module.exports = {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+//
+//
+//
 //
 //
 //

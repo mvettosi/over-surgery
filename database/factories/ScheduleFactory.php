@@ -7,7 +7,7 @@ $factory->define(App\Models\Schedule::class, function (Faker $faker) {
         'start_date' => '2018-01-01',
         'end_date' => '2019-01-01',
         'start_time' => '09:00:00',
-        'duration' => 2,
+        'duration' => 8,
         'mon' => true,
         'tue' => true,
         'wed' => true,

@@ -38,9 +38,9 @@ class DatabaseSchema extends Migration {
         Schema::create('appointments', function (Blueprint $table) {
             $table->increments('id');
             $table->dateTime('start_time');
-            $table->dateTime('end_time');
+            // $table->dateTime('end_time');
             $table->string('location');
-            $table->string('notes');
+            $table->string('notes')->nullable();
             $table->integer('patient_id')->unsigned();
             $table->foreign('patient_id')->references('id')->on('users');
             $table->integer('doctor_or_nurse_id')->unsigned();

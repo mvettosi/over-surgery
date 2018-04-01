@@ -13,7 +13,10 @@ import Register from './components/Register.vue';
 import Login from './components/Login.vue';
 import Dashboard from './components/Dashboard.vue';
 import Availability from './components/Availability.vue';
+import Appointments from './components/Appointments.vue';
 import Calendar from './components/Calendar.vue';
+
+// Utility Components
 
 // Css
 import 'vuetify/dist/vuetify.min.css';
@@ -76,6 +79,13 @@ const router = new VueRouter({
                 path: '/availability',
                 name: 'availability',
                 component: Availability,
+                meta: {
+                    auth: true
+                }
+            }, {
+                path: '/appointments',
+                name: 'appointments',
+                component: Appointments,
                 meta: {
                     auth: true
                 }

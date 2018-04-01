@@ -41,9 +41,9 @@
             </v-menu>
         </v-toolbar>
         <v-content>
-            <v-container fluid>
+            <main>
                 <router-view></router-view>
-            </v-container>
+            </main>
         </v-content>
     </v-app>
 </template>
@@ -55,19 +55,25 @@ export default {
       clipped: false,
       items: [
         {
-          icon: "local_activity",
+          icon: "dashboard",
           title: "Dashboard",
           path: "/dashboard",
           role: "patient"
         },
         {
-          icon: "restaurant",
+          icon: "person",
           title: "Availability",
           path: "/availability",
           role: "patient"
         },
         {
-          icon: "restaurant",
+          icon: "event",
+          title: "Appointments",
+          path: "/appointments",
+          role: "patient"
+        },
+        {
+          icon: "calendar",
           title: "Calendar",
           path: "/calendar",
           role: "receptionist"
@@ -81,7 +87,7 @@ export default {
     };
   },
   created() {
-    this.$router.push("availability");
+    this.$router.push("appointments");
   },
   methods: {
     menuAction(title) {

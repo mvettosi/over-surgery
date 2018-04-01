@@ -1,6 +1,5 @@
 <template>
     <v-container grid-list-md>
-        <v-confirm ref="confirm"></v-confirm>
         <v-layout v-for="(appointment, index) in appointments" :key="`appointment-${index}`" class="mt-3" row wrap>
             <v-flex xs12>
                 <v-card class="pa-2">
@@ -60,7 +59,6 @@
     </v-container>
 </template>
 <script>
-import Confirm from "./Confirm.vue";
 export default {
   data() {
     return {
@@ -73,9 +71,6 @@ export default {
   },
   created() {
     this.fetchData();
-  },
-  components: {
-    "v-confirm": Confirm
   },
   methods: {
     fetchData() {
@@ -108,8 +103,12 @@ export default {
         });
     },
     confirmDelete(id) {
-      this.$refs.confirm
-        .open("Delete", "Are you sure?", { color: "red" })
+      this.$root
+        .$confirm(
+          "Delete appointment",
+          "Are you sure you want to delete this appointment?",
+          { color: "error" }
+        )
         .then(confirm => {
           if (confirm) {
             this.deleteAppointment(id);

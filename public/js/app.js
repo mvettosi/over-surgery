@@ -2531,6 +2531,8 @@ return /******/ (function(modules) { // webpackBootstrap
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Confirm_vue__ = __webpack_require__(77);
+//
 //
 //
 //
@@ -2581,6 +2583,7 @@ return /******/ (function(modules) { // webpackBootstrap
 //
 //
 
+
 /* harmony default export */ __webpack_exports__["a"] = ({
   data: function data() {
     return {
@@ -2612,8 +2615,15 @@ return /******/ (function(modules) { // webpackBootstrap
       }]
     };
   },
+
+  components: {
+    "v-confirm": __WEBPACK_IMPORTED_MODULE_0__Confirm_vue__["a" /* default */]
+  },
   created: function created() {
     this.$router.push("appointments");
+  },
+  mounted: function mounted() {
+    this.$root.$confirm = this.$refs.confirm.open;
   },
 
   methods: {
@@ -36076,7 +36086,13 @@ var render = function() {
         1
       ),
       _vm._v(" "),
-      _c("v-content", [_c("main", [_c("router-view")], 1)])
+      _c("v-content", [
+        _c(
+          "main",
+          [_c("v-confirm", { ref: "confirm" }), _vm._v(" "), _c("router-view")],
+          1
+        )
+      ])
     ],
     1
   )
@@ -38380,8 +38396,6 @@ var render = function() {
     "v-container",
     { attrs: { "grid-list-md": "" } },
     [
-      _c("v-confirm", { ref: "confirm" }),
-      _vm._v(" "),
       _vm._l(_vm.appointments, function(appointment, index) {
         return _c(
           "v-layout",
@@ -40453,7 +40467,6 @@ module.exports = {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Confirm_vue__ = __webpack_require__(77);
 //
 //
 //
@@ -40514,8 +40527,6 @@ module.exports = {
 //
 //
 //
-//
-
 
 /* harmony default export */ __webpack_exports__["a"] = ({
   data: function data() {
@@ -40531,9 +40542,6 @@ module.exports = {
     this.fetchData();
   },
 
-  components: {
-    "v-confirm": __WEBPACK_IMPORTED_MODULE_0__Confirm_vue__["a" /* default */]
-  },
   methods: {
     fetchData: function fetchData() {
       var _this = this;
@@ -40563,7 +40571,7 @@ module.exports = {
     confirmDelete: function confirmDelete(id) {
       var _this3 = this;
 
-      this.$refs.confirm.open("Delete", "Are you sure?", { color: "red" }).then(function (confirm) {
+      this.$root.$confirm("Delete appointment", "Are you sure you want to delete this appointment?", { color: "error" }).then(function (confirm) {
         if (confirm) {
           _this3.deleteAppointment(id);
         }

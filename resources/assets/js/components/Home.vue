@@ -42,12 +42,14 @@
         </v-toolbar>
         <v-content>
             <main>
+                <v-confirm ref="confirm"></v-confirm>
                 <router-view></router-view>
             </main>
         </v-content>
     </v-app>
 </template>
 <script>
+import Confirm from "./Confirm.vue";
 export default {
   data() {
     return {
@@ -86,8 +88,14 @@ export default {
       ]
     };
   },
+  components: {
+    "v-confirm": Confirm
+  },
   created() {
     this.$router.push("appointments");
+  },
+  mounted() {
+    this.$root.$confirm = this.$refs.confirm.open;
   },
   methods: {
     menuAction(title) {

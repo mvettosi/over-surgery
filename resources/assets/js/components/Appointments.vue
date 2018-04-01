@@ -52,21 +52,13 @@
                 </v-card>
             </v-flex>
         </v-layout>
-        <v-snackbar v-model="snackbar" :color="snackbarType" :timeout="snackbarTimeout">
-            {{ snackbarMessage }}
-            <v-btn dark flat @click.native="snackbar = false">Close</v-btn>
-        </v-snackbar>
     </v-container>
 </template>
 <script>
 export default {
   data() {
     return {
-      appointments: [],
-      snackbar: false,
-      snackbarTimeout: 2750,
-      snackbarMessage: "",
-      snackbarType: "error"
+      appointments: []
     };
   },
   created() {
@@ -84,27 +76,33 @@ export default {
           this.appointments = response.data;
         })
         .catch(e => {
-          this.manageError(e);
+          this.$root.$snackbar.open(e.response.data.message, {
+            color: "error"
+          });
         });
     },
     editAppointment(id, doctor_id, time) {
       var url = "/appointments/" + id;
-      this.snackbar = false;
+      this.$root.$snackbar.close();
       this.axios
         .put(url, {
           start_hour: parseInt(time.substr(0, time.indexOf(":")))
         })
         .then(response => {
-          this.manageSuccess(response);
+          this.$root.$snackbar.open(response.data.message, {
+            color: "success"
+          });
           this.fetchData();
         })
         .catch(e => {
-          this.manageError(e);
+          this.$root.$snackbar.open(e.response.data.message, {
+            color: "error"
+          });
         });
     },
     confirmDelete(id) {
-      this.$root
-        .$confirm(
+      this.$root.$confirm
+        .open(
           "Delete appointment",
           "Are you sure you want to delete this appointment?",
           { color: "error" }
@@ -120,23 +118,16 @@ export default {
       this.axios
         .delete(url)
         .then(response => {
-          this.manageSuccess(response);
+          this.$root.$snackbar.open(response.data.message, {
+            color: "success"
+          });
           this.fetchData();
         })
         .catch(e => {
-          this.manageError(e);
+          this.$root.$snackbar.open(e.response.data.message, {
+            color: "error"
+          });
         });
-    },
-    manageSuccess(response) {
-      this.snackbarType = "success";
-      this.snackbarMessage = response.data.message;
-      this.snackbar = true;
-    },
-    manageError(e) {
-      this.errors.push(e.response.data);
-      this.snackbarType = "error";
-      this.snackbarMessage = e.response.data.message;
-      this.snackbar = true;
     }
   }
 };

@@ -126,10 +126,6 @@
                 </v-expansion-panel-content>
             </v-expansion-panel>
         </v-layout>
-        <v-snackbar v-model="snackbar" :color="snackbarType" :timeout="snackbarTimeout">
-            {{ snackbarMessage }}
-            <v-btn dark flat @click.native="snackbar = false">Close</v-btn>
-        </v-snackbar>
     </v-container>
 </template>
 <script>
@@ -154,11 +150,7 @@ export default {
       searchDate: today,
       doctors: [],
       nurses: [],
-      errors: [],
-      snackbar: false,
-      snackbarTimeout: 2750,
-      snackbarMessage: "",
-      snackbarType: "error"
+      errors: []
     };
   },
   created() {
@@ -191,7 +183,9 @@ export default {
             this.doctors = response.data;
           })
           .catch(e => {
-            this.manageError(e);
+            this.$root.$snackbar.open(e.response.data.message, {
+              color: "error"
+            });
           });
       }
       if (this.workerType == "nurse" || this.workerType == "both") {
@@ -206,36 +200,31 @@ export default {
             this.nurses = response.data;
           })
           .catch(e => {
-            this.manageError(e);
+            this.$root.$snackbar.open(e.response.data.message, {
+              color: "error"
+            });
           });
       }
     },
     bookAppointment(id, time) {
       var url = "/appointments";
-      this.snackbar = false;
+      this.$root.$snackbar.close();
       this.axios
         .post(url, {
           start_time: this.searchDate + " " + time,
           doctor_or_nurse_id: id
         })
         .then(response => {
-          this.manageSuccess(response);
+          this.$root.$snackbar.open(response.data.message, {
+            color: "success"
+          });
           this.fetchData();
         })
         .catch(e => {
-          this.manageError(e);
+          this.$root.$snackbar.open(e.response.data.message, {
+            color: "error"
+          });
         });
-    },
-    manageSuccess(response) {
-      this.snackbarType = "success";
-      this.snackbarMessage = response.data.message;
-      this.snackbar = true;
-    },
-    manageError(e) {
-      this.errors.push(e.response.data);
-      this.snackbarType = "error";
-      this.snackbarMessage = e.response.data.message;
-      this.snackbar = true;
     }
   }
 };

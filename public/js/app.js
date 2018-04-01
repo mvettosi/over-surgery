@@ -2532,6 +2532,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Confirm_vue__ = __webpack_require__(77);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__MaterialSnackbar_vue__ = __webpack_require__(80);
 //
 //
 //
@@ -2582,6 +2583,8 @@ return /******/ (function(modules) { // webpackBootstrap
 //
 //
 //
+//
+
 
 
 /* harmony default export */ __webpack_exports__["a"] = ({
@@ -2617,13 +2620,15 @@ return /******/ (function(modules) { // webpackBootstrap
   },
 
   components: {
-    "v-confirm": __WEBPACK_IMPORTED_MODULE_0__Confirm_vue__["a" /* default */]
+    "v-confirm": __WEBPACK_IMPORTED_MODULE_0__Confirm_vue__["a" /* default */],
+    "v-material-snackbar": __WEBPACK_IMPORTED_MODULE_1__MaterialSnackbar_vue__["a" /* default */]
   },
   created: function created() {
     this.$router.push("appointments");
   },
   mounted: function mounted() {
-    this.$root.$confirm = this.$refs.confirm.open;
+    this.$root.$confirm = this.$refs.confirm;
+    this.$root.$snackbar = this.$refs.snackbar;
   },
 
   methods: {
@@ -3277,10 +3282,6 @@ return /******/ (function(modules) { // webpackBootstrap
 //
 //
 //
-//
-//
-//
-//
 
 /* harmony default export */ __webpack_exports__["a"] = ({
   data: function data() {
@@ -3296,11 +3297,7 @@ return /******/ (function(modules) { // webpackBootstrap
       searchDate: today,
       doctors: [],
       nurses: [],
-      errors: [],
-      snackbar: false,
-      snackbarTimeout: 2750,
-      snackbarMessage: "",
-      snackbarType: "error"
+      errors: []
     };
   },
   created: function created() {
@@ -3329,7 +3326,9 @@ return /******/ (function(modules) { // webpackBootstrap
         this.axios.get(url).then(function (response) {
           _this.doctors = response.data;
         }).catch(function (e) {
-          _this.manageError(e);
+          _this.$root.$snackbar.open(e.response.data.message, {
+            color: "error"
+          });
         });
       }
       if (this.workerType == "nurse" || this.workerType == "both") {
@@ -3337,7 +3336,9 @@ return /******/ (function(modules) { // webpackBootstrap
         this.axios.get(url).then(function (response) {
           _this.nurses = response.data;
         }).catch(function (e) {
-          _this.manageError(e);
+          _this.$root.$snackbar.open(e.response.data.message, {
+            color: "error"
+          });
         });
       }
     },
@@ -3345,27 +3346,20 @@ return /******/ (function(modules) { // webpackBootstrap
       var _this2 = this;
 
       var url = "/appointments";
-      this.snackbar = false;
+      this.$root.$snackbar.close();
       this.axios.post(url, {
         start_time: this.searchDate + " " + time,
         doctor_or_nurse_id: id
       }).then(function (response) {
-        _this2.manageSuccess(response);
+        _this2.$root.$snackbar.open(response.data.message, {
+          color: "success"
+        });
         _this2.fetchData();
       }).catch(function (e) {
-        _this2.manageError(e);
+        _this2.$root.$snackbar.open(e.response.data.message, {
+          color: "error"
+        });
       });
-    },
-    manageSuccess: function manageSuccess(response) {
-      this.snackbarType = "success";
-      this.snackbarMessage = response.data.message;
-      this.snackbar = true;
-    },
-    manageError: function manageError(e) {
-      this.errors.push(e.response.data);
-      this.snackbarType = "error";
-      this.snackbarMessage = e.response.data.message;
-      this.snackbar = true;
     }
   }
 });
@@ -36089,7 +36083,13 @@ var render = function() {
       _c("v-content", [
         _c(
           "main",
-          [_c("v-confirm", { ref: "confirm" }), _vm._v(" "), _c("router-view")],
+          [
+            _c("v-confirm", { ref: "confirm" }),
+            _vm._v(" "),
+            _c("v-material-snackbar", { ref: "snackbar" }),
+            _vm._v(" "),
+            _c("router-view")
+          ],
           1
         )
       ])
@@ -38282,37 +38282,7 @@ var render = function() {
             ],
             1
           )
-        : _vm._e(),
-      _vm._v(" "),
-      _c(
-        "v-snackbar",
-        {
-          attrs: { color: _vm.snackbarType, timeout: _vm.snackbarTimeout },
-          model: {
-            value: _vm.snackbar,
-            callback: function($$v) {
-              _vm.snackbar = $$v
-            },
-            expression: "snackbar"
-          }
-        },
-        [
-          _vm._v("\n        " + _vm._s(_vm.snackbarMessage) + "\n        "),
-          _c(
-            "v-btn",
-            {
-              attrs: { dark: "", flat: "" },
-              nativeOn: {
-                click: function($event) {
-                  _vm.snackbar = false
-                }
-              }
-            },
-            [_vm._v("Close")]
-          )
-        ],
-        1
-      )
+        : _vm._e()
     ],
     1
   )
@@ -38395,324 +38365,281 @@ var render = function() {
   return _c(
     "v-container",
     { attrs: { "grid-list-md": "" } },
-    [
-      _vm._l(_vm.appointments, function(appointment, index) {
-        return _c(
-          "v-layout",
-          {
-            key: "appointment-" + index,
-            staticClass: "mt-3",
-            attrs: { row: "", wrap: "" }
-          },
-          [
-            _c(
-              "v-flex",
-              { attrs: { xs12: "" } },
-              [
-                _c(
-                  "v-card",
-                  { staticClass: "pa-2" },
-                  [
-                    _c(
-                      "v-card-text",
-                      [
-                        _c(
-                          "v-layout",
-                          { attrs: { row: "", wrap: "" } },
-                          [
-                            _c(
-                              "v-flex",
-                              {
-                                staticClass: "headline",
-                                attrs: {
-                                  xs6: "",
-                                  sm4: "",
-                                  md3: "",
-                                  lg3: "",
-                                  xl2: ""
-                                }
-                              },
-                              [
-                                _c("v-icon", [_vm._v("event")]),
-                                _vm._v(
-                                  "\n                            " +
-                                    _vm._s(
-                                      new Date(
-                                        appointment.start_time
-                                      ).toLocaleDateString()
-                                    ) +
-                                    "\n                            "
-                                )
-                              ],
-                              1
-                            ),
-                            _vm._v(" "),
-                            _c(
-                              "v-flex",
-                              {
-                                staticClass: "headline",
-                                attrs: {
-                                  xs6: "",
-                                  sm5: "",
-                                  md7: "",
-                                  lg7: "",
-                                  xl9: ""
-                                }
-                              },
-                              [
-                                _c("v-icon", [_vm._v("person")]),
-                                _vm._v(
-                                  "\n                            " +
-                                    _vm._s(
-                                      appointment.doctor.name +
-                                        " " +
-                                        appointment.doctor.surname
-                                    ) +
-                                    "\n                            "
-                                )
-                              ],
-                              1
-                            ),
-                            _vm._v(" "),
-                            _vm.$vuetify.breakpoint.smAndUp &&
-                            new Date(
-                              appointment.start_time
-                            ).toLocaleDateString() !==
-                              new Date().toLocaleDateString()
-                              ? _c(
-                                  "v-flex",
-                                  {
-                                    attrs: {
-                                      sm3: "",
-                                      md2: "",
-                                      lg2: "",
-                                      xl1: ""
-                                    }
-                                  },
-                                  [
-                                    _c(
-                                      "v-menu",
-                                      {
-                                        attrs: {
-                                          transition: "slide-y-transition",
-                                          bottom: ""
-                                        }
-                                      },
-                                      [
-                                        _c(
-                                          "v-btn",
-                                          {
-                                            attrs: {
-                                              slot: "activator",
-                                              color: "primary"
-                                            },
-                                            slot: "activator"
-                                          },
-                                          [_vm._v("Edit")]
-                                        ),
-                                        _vm._v(" "),
-                                        _c(
-                                          "v-list",
-                                          _vm._l(
-                                            appointment.doctor.availableHours,
-                                            function(hours) {
-                                              return _c(
-                                                "v-list-tile",
-                                                {
-                                                  key: hours.title,
-                                                  on: {
-                                                    click: function($event) {
-                                                      _vm.editAppointment(
-                                                        appointment.id,
-                                                        appointment.doctor.id,
-                                                        hours.title
-                                                      )
-                                                    }
-                                                  }
-                                                },
-                                                [
-                                                  _c("v-list-tile-title", [
-                                                    _vm._v(_vm._s(hours.title))
-                                                  ])
-                                                ],
-                                                1
-                                              )
-                                            }
-                                          )
-                                        )
-                                      ],
-                                      1
-                                    )
-                                  ],
-                                  1
-                                )
-                              : _vm._e()
-                          ],
-                          1
-                        ),
-                        _vm._v(" "),
-                        _c(
-                          "v-layout",
-                          { attrs: { row: "", wrap: "" } },
-                          [
-                            _c(
-                              "v-flex",
-                              {
-                                staticClass: "headline",
-                                attrs: {
-                                  xs6: "",
-                                  sm4: "",
-                                  md3: "",
-                                  lg3: "",
-                                  xl2: ""
-                                }
-                              },
-                              [
-                                _c("v-icon", [_vm._v("schedule")]),
-                                _vm._v(
-                                  "\n                            " +
-                                    _vm._s(
-                                      new Date(
-                                        appointment.start_time
-                                      ).toLocaleString("en-UK", {
-                                        hour: "numeric",
-                                        minute: "numeric",
-                                        hour12: true
-                                      })
-                                    ) +
-                                    "\n                            "
-                                )
-                              ],
-                              1
-                            ),
-                            _vm._v(" "),
-                            _c(
-                              "v-flex",
-                              {
-                                staticClass: "headline",
-                                attrs: {
-                                  xs6: "",
-                                  sm5: "",
-                                  md7: "",
-                                  lg7: "",
-                                  xl9: ""
-                                }
-                              },
-                              [
-                                _c("v-icon", [_vm._v("place")]),
-                                _vm._v(
-                                  "\n                            " +
-                                    _vm._s(appointment.location) +
-                                    "\n                            "
-                                )
-                              ],
-                              1
-                            ),
-                            _vm._v(" "),
-                            _vm.$vuetify.breakpoint.smAndUp
-                              ? _c(
-                                  "v-flex",
-                                  {
-                                    staticClass: "headline",
-                                    attrs: {
-                                      sm3: "",
-                                      md2: "",
-                                      lg2: "",
-                                      xl1: ""
-                                    }
-                                  },
-                                  [
-                                    _c(
-                                      "v-btn",
-                                      {
-                                        attrs: { color: "primary" },
-                                        on: {
-                                          click: function($event) {
-                                            _vm.confirmDelete(appointment.id)
-                                          }
-                                        }
-                                      },
-                                      [_vm._v("Delete")]
-                                    )
-                                  ],
-                                  1
-                                )
-                              : _vm._e()
-                          ],
-                          1
-                        )
-                      ],
-                      1
-                    ),
-                    _vm._v(" "),
-                    _vm.$vuetify.breakpoint.xs
-                      ? _c(
-                          "v-card-actions",
-                          [
-                            _c("v-spacer"),
-                            _vm._v(" "),
-                            new Date(
-                              appointment.start_time
-                            ).toLocaleDateString() !==
-                            new Date().toLocaleDateString()
-                              ? _c("v-btn", { attrs: { color: "primary" } }, [
-                                  _vm._v("Edit")
-                                ])
-                              : _vm._e(),
-                            _vm._v(" "),
-                            _c("v-spacer"),
-                            _vm._v(" "),
-                            _c("v-btn", { attrs: { color: "primary" } }, [
-                              _vm._v("Delete")
-                            ]),
-                            _vm._v(" "),
-                            _c("v-spacer")
-                          ],
-                          1
-                        )
-                      : _vm._e()
-                  ],
-                  1
-                )
-              ],
-              1
-            )
-          ],
-          1
-        )
-      }),
-      _vm._v(" "),
-      _c(
-        "v-snackbar",
+    _vm._l(_vm.appointments, function(appointment, index) {
+      return _c(
+        "v-layout",
         {
-          attrs: { color: _vm.snackbarType, timeout: _vm.snackbarTimeout },
-          model: {
-            value: _vm.snackbar,
-            callback: function($$v) {
-              _vm.snackbar = $$v
-            },
-            expression: "snackbar"
-          }
+          key: "appointment-" + index,
+          staticClass: "mt-3",
+          attrs: { row: "", wrap: "" }
         },
         [
-          _vm._v("\n        " + _vm._s(_vm.snackbarMessage) + "\n        "),
           _c(
-            "v-btn",
-            {
-              attrs: { dark: "", flat: "" },
-              nativeOn: {
-                click: function($event) {
-                  _vm.snackbar = false
-                }
-              }
-            },
-            [_vm._v("Close")]
+            "v-flex",
+            { attrs: { xs12: "" } },
+            [
+              _c(
+                "v-card",
+                { staticClass: "pa-2" },
+                [
+                  _c(
+                    "v-card-text",
+                    [
+                      _c(
+                        "v-layout",
+                        { attrs: { row: "", wrap: "" } },
+                        [
+                          _c(
+                            "v-flex",
+                            {
+                              staticClass: "headline",
+                              attrs: {
+                                xs6: "",
+                                sm4: "",
+                                md3: "",
+                                lg3: "",
+                                xl2: ""
+                              }
+                            },
+                            [
+                              _c("v-icon", [_vm._v("event")]),
+                              _vm._v(
+                                "\n                            " +
+                                  _vm._s(
+                                    new Date(
+                                      appointment.start_time
+                                    ).toLocaleDateString()
+                                  ) +
+                                  "\n                            "
+                              )
+                            ],
+                            1
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "v-flex",
+                            {
+                              staticClass: "headline",
+                              attrs: {
+                                xs6: "",
+                                sm5: "",
+                                md7: "",
+                                lg7: "",
+                                xl9: ""
+                              }
+                            },
+                            [
+                              _c("v-icon", [_vm._v("person")]),
+                              _vm._v(
+                                "\n                            " +
+                                  _vm._s(
+                                    appointment.doctor.name +
+                                      " " +
+                                      appointment.doctor.surname
+                                  ) +
+                                  "\n                            "
+                              )
+                            ],
+                            1
+                          ),
+                          _vm._v(" "),
+                          _vm.$vuetify.breakpoint.smAndUp &&
+                          new Date(
+                            appointment.start_time
+                          ).toLocaleDateString() !==
+                            new Date().toLocaleDateString()
+                            ? _c(
+                                "v-flex",
+                                {
+                                  attrs: { sm3: "", md2: "", lg2: "", xl1: "" }
+                                },
+                                [
+                                  _c(
+                                    "v-menu",
+                                    {
+                                      attrs: {
+                                        transition: "slide-y-transition",
+                                        bottom: ""
+                                      }
+                                    },
+                                    [
+                                      _c(
+                                        "v-btn",
+                                        {
+                                          attrs: {
+                                            slot: "activator",
+                                            color: "primary"
+                                          },
+                                          slot: "activator"
+                                        },
+                                        [_vm._v("Edit")]
+                                      ),
+                                      _vm._v(" "),
+                                      _c(
+                                        "v-list",
+                                        _vm._l(
+                                          appointment.doctor.availableHours,
+                                          function(hours) {
+                                            return _c(
+                                              "v-list-tile",
+                                              {
+                                                key: hours.title,
+                                                on: {
+                                                  click: function($event) {
+                                                    _vm.editAppointment(
+                                                      appointment.id,
+                                                      appointment.doctor.id,
+                                                      hours.title
+                                                    )
+                                                  }
+                                                }
+                                              },
+                                              [
+                                                _c("v-list-tile-title", [
+                                                  _vm._v(_vm._s(hours.title))
+                                                ])
+                                              ],
+                                              1
+                                            )
+                                          }
+                                        )
+                                      )
+                                    ],
+                                    1
+                                  )
+                                ],
+                                1
+                              )
+                            : _vm._e()
+                        ],
+                        1
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "v-layout",
+                        { attrs: { row: "", wrap: "" } },
+                        [
+                          _c(
+                            "v-flex",
+                            {
+                              staticClass: "headline",
+                              attrs: {
+                                xs6: "",
+                                sm4: "",
+                                md3: "",
+                                lg3: "",
+                                xl2: ""
+                              }
+                            },
+                            [
+                              _c("v-icon", [_vm._v("schedule")]),
+                              _vm._v(
+                                "\n                            " +
+                                  _vm._s(
+                                    new Date(
+                                      appointment.start_time
+                                    ).toLocaleString("en-UK", {
+                                      hour: "numeric",
+                                      minute: "numeric",
+                                      hour12: true
+                                    })
+                                  ) +
+                                  "\n                            "
+                              )
+                            ],
+                            1
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "v-flex",
+                            {
+                              staticClass: "headline",
+                              attrs: {
+                                xs6: "",
+                                sm5: "",
+                                md7: "",
+                                lg7: "",
+                                xl9: ""
+                              }
+                            },
+                            [
+                              _c("v-icon", [_vm._v("place")]),
+                              _vm._v(
+                                "\n                            " +
+                                  _vm._s(appointment.location) +
+                                  "\n                            "
+                              )
+                            ],
+                            1
+                          ),
+                          _vm._v(" "),
+                          _vm.$vuetify.breakpoint.smAndUp
+                            ? _c(
+                                "v-flex",
+                                {
+                                  staticClass: "headline",
+                                  attrs: { sm3: "", md2: "", lg2: "", xl1: "" }
+                                },
+                                [
+                                  _c(
+                                    "v-btn",
+                                    {
+                                      attrs: { color: "primary" },
+                                      on: {
+                                        click: function($event) {
+                                          _vm.confirmDelete(appointment.id)
+                                        }
+                                      }
+                                    },
+                                    [_vm._v("Delete")]
+                                  )
+                                ],
+                                1
+                              )
+                            : _vm._e()
+                        ],
+                        1
+                      )
+                    ],
+                    1
+                  ),
+                  _vm._v(" "),
+                  _vm.$vuetify.breakpoint.xs
+                    ? _c(
+                        "v-card-actions",
+                        [
+                          _c("v-spacer"),
+                          _vm._v(" "),
+                          new Date(
+                            appointment.start_time
+                          ).toLocaleDateString() !==
+                          new Date().toLocaleDateString()
+                            ? _c("v-btn", { attrs: { color: "primary" } }, [
+                                _vm._v("Edit")
+                              ])
+                            : _vm._e(),
+                          _vm._v(" "),
+                          _c("v-spacer"),
+                          _vm._v(" "),
+                          _c("v-btn", { attrs: { color: "primary" } }, [
+                            _vm._v("Delete")
+                          ]),
+                          _vm._v(" "),
+                          _c("v-spacer")
+                        ],
+                        1
+                      )
+                    : _vm._e()
+                ],
+                1
+              )
+            ],
+            1
           )
         ],
         1
       )
-    ],
-    2
+    })
   )
 }
 var staticRenderFns = []
@@ -40523,19 +40450,11 @@ module.exports = {
 //
 //
 //
-//
-//
-//
-//
 
 /* harmony default export */ __webpack_exports__["a"] = ({
   data: function data() {
     return {
-      appointments: [],
-      snackbar: false,
-      snackbarTimeout: 2750,
-      snackbarMessage: "",
-      snackbarType: "error"
+      appointments: []
     };
   },
   created: function created() {
@@ -40551,27 +40470,33 @@ module.exports = {
       this.axios.get(url).then(function (response) {
         _this.appointments = response.data;
       }).catch(function (e) {
-        _this.manageError(e);
+        _this.$root.$snackbar.open(e.response.data.message, {
+          color: "error"
+        });
       });
     },
     editAppointment: function editAppointment(id, doctor_id, time) {
       var _this2 = this;
 
       var url = "/appointments/" + id;
-      this.snackbar = false;
+      this.$root.$snackbar.close();
       this.axios.put(url, {
         start_hour: parseInt(time.substr(0, time.indexOf(":")))
       }).then(function (response) {
-        _this2.manageSuccess(response);
+        _this2.$root.$snackbar.open(response.data.message, {
+          color: "success"
+        });
         _this2.fetchData();
       }).catch(function (e) {
-        _this2.manageError(e);
+        _this2.$root.$snackbar.open(e.response.data.message, {
+          color: "error"
+        });
       });
     },
     confirmDelete: function confirmDelete(id) {
       var _this3 = this;
 
-      this.$root.$confirm("Delete appointment", "Are you sure you want to delete this appointment?", { color: "error" }).then(function (confirm) {
+      this.$root.$confirm.open("Delete appointment", "Are you sure you want to delete this appointment?", { color: "error" }).then(function (confirm) {
         if (confirm) {
           _this3.deleteAppointment(id);
         }
@@ -40582,22 +40507,15 @@ module.exports = {
 
       var url = "/appointments/" + id;
       this.axios.delete(url).then(function (response) {
-        _this4.manageSuccess(response);
+        _this4.$root.$snackbar.open(response.data.message, {
+          color: "success"
+        });
         _this4.fetchData();
       }).catch(function (e) {
-        _this4.manageError(e);
+        _this4.$root.$snackbar.open(e.response.data.message, {
+          color: "error"
+        });
       });
-    },
-    manageSuccess: function manageSuccess(response) {
-      this.snackbarType = "success";
-      this.snackbarMessage = response.data.message;
-      this.snackbar = true;
-    },
-    manageError: function manageError(e) {
-      this.errors.push(e.response.data);
-      this.snackbarType = "error";
-      this.snackbarMessage = e.response.data.message;
-      this.snackbar = true;
     }
   }
 });
@@ -40626,6 +40544,7 @@ module.exports = {
 
 /**
  * Vuetify Confirm Dialog component
+ * from: https://gist.github.com/eolant/ba0f8a5c9135d1a146e1db575276177d
  *
  * Insert component where you want to use it:
  * <confirm ref="confirm"></confirm>
@@ -40850,6 +40769,147 @@ if (false) {
   module.hot.accept()
   if (module.hot.data) {
     require("vue-hot-reload-api")      .rerender("data-v-55cda2d9", { render: render, staticRenderFns: staticRenderFns })
+  }
+}
+
+/***/ }),
+/* 79 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["a"] = ({
+  data: function data() {
+    return {
+      snackbar: false,
+      message: null,
+      options: {
+        color: "error",
+        timeout: 2750
+      }
+    };
+  },
+
+  methods: {
+    open: function open(message, options) {
+      this.snackbar = true;
+      this.message = message;
+      this.options = Object.assign(this.options, options);
+    },
+    close: function close() {
+      this.snackbar = false;
+    }
+  }
+});
+
+/***/ }),
+/* 80 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__babel_loader_cacheDirectory_true_presets_env_modules_false_targets_browsers_2_uglify_true_plugins_transform_object_rest_spread_transform_runtime_polyfill_false_helpers_false_node_modules_vue_loader_lib_selector_type_script_index_0_MaterialSnackbar_vue__ = __webpack_require__(79);
+/* unused harmony namespace reexport */
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_34167f83_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_MaterialSnackbar_vue__ = __webpack_require__(81);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__node_modules_vue_loader_lib_runtime_component_normalizer__ = __webpack_require__(1);
+var disposed = false
+/* script */
+
+
+/* template */
+
+/* template functional */
+var __vue_template_functional__ = false
+/* styles */
+var __vue_styles__ = null
+/* scopeId */
+var __vue_scopeId__ = null
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+
+var Component = Object(__WEBPACK_IMPORTED_MODULE_2__node_modules_vue_loader_lib_runtime_component_normalizer__["a" /* default */])(
+  __WEBPACK_IMPORTED_MODULE_0__babel_loader_cacheDirectory_true_presets_env_modules_false_targets_browsers_2_uglify_true_plugins_transform_object_rest_spread_transform_runtime_polyfill_false_helpers_false_node_modules_vue_loader_lib_selector_type_script_index_0_MaterialSnackbar_vue__["a" /* default */],
+  __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_34167f83_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_MaterialSnackbar_vue__["a" /* render */],
+  __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_34167f83_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_MaterialSnackbar_vue__["b" /* staticRenderFns */],
+  __vue_template_functional__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources/assets/js/components/MaterialSnackbar.vue"
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-34167f83", Component.options)
+  } else {
+    hotAPI.reload("data-v-34167f83", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+/* harmony default export */ __webpack_exports__["a"] = (Component.exports);
+
+
+/***/ }),
+/* 81 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c(
+    "v-snackbar",
+    {
+      attrs: { color: _vm.options.color, timeout: _vm.options.timeout },
+      model: {
+        value: _vm.snackbar,
+        callback: function($$v) {
+          _vm.snackbar = $$v
+        },
+        expression: "snackbar"
+      }
+    },
+    [
+      _vm._v("\n  " + _vm._s(_vm.message) + "\n  "),
+      _c(
+        "v-btn",
+        {
+          attrs: { dark: "", flat: "" },
+          nativeOn: {
+            click: function($event) {
+              _vm.snackbar = false
+            }
+          }
+        },
+        [_vm._v("Close")]
+      )
+    ],
+    1
+  )
+}
+var staticRenderFns = []
+render._withStripped = true
+
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+    require("vue-hot-reload-api")      .rerender("data-v-34167f83", { render: render, staticRenderFns: staticRenderFns })
   }
 }
 

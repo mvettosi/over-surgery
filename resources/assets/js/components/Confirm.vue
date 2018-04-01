@@ -17,6 +17,7 @@
 <script>
 /**
  * Vuetify Confirm Dialog component
+ * from: https://gist.github.com/eolant/ba0f8a5c9135d1a146e1db575276177d
  *
  * Insert component where you want to use it:
  * <confirm ref="confirm"></confirm>

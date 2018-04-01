@@ -43,6 +43,7 @@
         <v-content>
             <main>
                 <v-confirm ref="confirm"></v-confirm>
+                <v-material-snackbar ref="snackbar"></v-material-snackbar>
                 <router-view></router-view>
             </main>
         </v-content>
@@ -50,6 +51,7 @@
 </template>
 <script>
 import Confirm from "./Confirm.vue";
+import MaterialSnackbar from "./MaterialSnackbar.vue";
 export default {
   data() {
     return {
@@ -89,13 +91,15 @@ export default {
     };
   },
   components: {
-    "v-confirm": Confirm
+    "v-confirm": Confirm,
+    "v-material-snackbar": MaterialSnackbar
   },
   created() {
     this.$router.push("appointments");
   },
   mounted() {
-    this.$root.$confirm = this.$refs.confirm.open;
+    this.$root.$confirm = this.$refs.confirm;
+    this.$root.$snackbar = this.$refs.snackbar;
   },
   methods: {
     menuAction(title) {

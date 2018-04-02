@@ -2613,6 +2613,11 @@ return /******/ (function(modules) { // webpackBootstrap
         path: "/prescriptions",
         role: "patient"
       }, {
+        icon: "history",
+        title: "Tests",
+        path: "/tests",
+        role: "patient"
+      }, {
         icon: "calendar",
         title: "Calendar",
         path: "/calendar",
@@ -2629,7 +2634,7 @@ return /******/ (function(modules) { // webpackBootstrap
     "v-material-snackbar": __WEBPACK_IMPORTED_MODULE_1__MaterialSnackbar_vue__["a" /* default */]
   },
   created: function created() {
-    this.$router.push("prescriptions");
+    this.$router.push("tests");
   },
   mounted: function mounted() {
     this.$root.$confirm = this.$refs.confirm;
@@ -3491,9 +3496,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__components_Availability_vue__ = __webpack_require__(55);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__components_Appointments_vue__ = __webpack_require__(57);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__components_Prescriptions_vue__ = __webpack_require__(82);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__components_Calendar_vue__ = __webpack_require__(59);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_15_vuetify_dist_vuetify_min_css__ = __webpack_require__(61);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_15_vuetify_dist_vuetify_min_css___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_15_vuetify_dist_vuetify_min_css__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__components_Tests_vue__ = __webpack_require__(86);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__components_Calendar_vue__ = __webpack_require__(59);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_16_vuetify_dist_vuetify_min_css__ = __webpack_require__(61);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_16_vuetify_dist_vuetify_min_css___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_16_vuetify_dist_vuetify_min_css__);
 // Imports
 
 
@@ -3503,6 +3509,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 
 // Components
+
 
 
 
@@ -3593,9 +3600,16 @@ var router = new __WEBPACK_IMPORTED_MODULE_1_vue_router__["a" /* default */]({
                 auth: true
             }
         }, {
+            path: '/tests',
+            name: 'tests',
+            component: __WEBPACK_IMPORTED_MODULE_14__components_Tests_vue__["a" /* default */],
+            meta: {
+                auth: true
+            }
+        }, {
             path: '/calendar',
             name: 'calendar',
-            component: __WEBPACK_IMPORTED_MODULE_14__components_Calendar_vue__["a" /* default */],
+            component: __WEBPACK_IMPORTED_MODULE_15__components_Calendar_vue__["a" /* default */],
             meta: {
                 auth: true
             }
@@ -38384,7 +38398,7 @@ var render = function() {
         "v-layout",
         {
           key: "appointment-" + index,
-          staticClass: "mt-3",
+          staticClass: "mb-3",
           attrs: { row: "", wrap: "" }
         },
         [
@@ -38418,13 +38432,13 @@ var render = function() {
                             [
                               _c("v-icon", [_vm._v("event")]),
                               _vm._v(
-                                "\n                            " +
+                                "\n              " +
                                   _vm._s(
                                     new Date(
                                       appointment.start_time
                                     ).toLocaleDateString()
                                   ) +
-                                  "\n                        "
+                                  "\n            "
                               )
                             ],
                             1
@@ -38445,13 +38459,13 @@ var render = function() {
                             [
                               _c("v-icon", [_vm._v("person")]),
                               _vm._v(
-                                "\n                            " +
+                                "\n              " +
                                   _vm._s(
                                     appointment.doctor.name +
                                       " " +
                                       appointment.doctor.surname
                                   ) +
-                                  "\n                        "
+                                  "\n            "
                               )
                             ],
                             1
@@ -38548,7 +38562,7 @@ var render = function() {
                             [
                               _c("v-icon", [_vm._v("schedule")]),
                               _vm._v(
-                                "\n                            " +
+                                "\n              " +
                                   _vm._s(
                                     new Date(
                                       appointment.start_time
@@ -38558,7 +38572,7 @@ var render = function() {
                                       hour12: true
                                     })
                                   ) +
-                                  "\n                        "
+                                  "\n            "
                               )
                             ],
                             1
@@ -38579,9 +38593,9 @@ var render = function() {
                             [
                               _c("v-icon", [_vm._v("place")]),
                               _vm._v(
-                                "\n                            " +
+                                "\n              " +
                                   _vm._s(appointment.location) +
-                                  "\n                        "
+                                  "\n            "
                               )
                             ],
                             1
@@ -41370,6 +41384,348 @@ if (false) {
   module.hot.accept()
   if (module.hot.data) {
     require("vue-hot-reload-api")      .rerender("data-v-79e8a272", { render: render, staticRenderFns: staticRenderFns })
+  }
+}
+
+/***/ }),
+/* 85 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["a"] = ({
+  data: function data() {
+    return {
+      tests: [],
+      uncheckedOnly: true
+    };
+  },
+  created: function created() {
+    this.fetchData();
+  },
+
+  watch: {
+    uncheckedOnly: function uncheckedOnly() {
+      this.fetchData();
+    }
+  },
+  methods: {
+    fetchData: function fetchData() {
+      var _this = this;
+
+      this.tests = [];
+      var url = "/tests?include_checked=true&with_doctor=true&include_checked=" + !this.uncheckedOnly + "&patient_id=" + this.$auth.user().id;
+      this.axios.get(url).then(function (response) {
+        _this.tests = response.data;
+      }).catch(function (e) {
+        _this.$root.$snackbar.open(e.response.data.message, {
+          color: "error"
+        });
+      });
+    },
+    downloadResult: function downloadResult(id, fileName) {
+      var _this2 = this;
+
+      this.axios({
+        url: "/tests/" + id + "?download=true",
+        method: "GET",
+        responseType: "blob"
+      }).then(function (response) {
+        var url = window.URL.createObjectURL(new Blob([response.data]));
+        var link = document.createElement("a");
+        link.href = url;
+        link.setAttribute("download", fileName);
+        document.body.appendChild(link);
+        link.click();
+        _this2.fetchData();
+      });
+    }
+  }
+});
+
+/***/ }),
+/* 86 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__babel_loader_cacheDirectory_true_presets_env_modules_false_targets_browsers_2_uglify_true_plugins_transform_object_rest_spread_transform_runtime_polyfill_false_helpers_false_node_modules_vue_loader_lib_selector_type_script_index_0_Tests_vue__ = __webpack_require__(85);
+/* unused harmony namespace reexport */
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_0218ddfa_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Tests_vue__ = __webpack_require__(87);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__node_modules_vue_loader_lib_runtime_component_normalizer__ = __webpack_require__(1);
+var disposed = false
+/* script */
+
+
+/* template */
+
+/* template functional */
+var __vue_template_functional__ = false
+/* styles */
+var __vue_styles__ = null
+/* scopeId */
+var __vue_scopeId__ = null
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+
+var Component = Object(__WEBPACK_IMPORTED_MODULE_2__node_modules_vue_loader_lib_runtime_component_normalizer__["a" /* default */])(
+  __WEBPACK_IMPORTED_MODULE_0__babel_loader_cacheDirectory_true_presets_env_modules_false_targets_browsers_2_uglify_true_plugins_transform_object_rest_spread_transform_runtime_polyfill_false_helpers_false_node_modules_vue_loader_lib_selector_type_script_index_0_Tests_vue__["a" /* default */],
+  __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_0218ddfa_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Tests_vue__["a" /* render */],
+  __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_0218ddfa_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Tests_vue__["b" /* staticRenderFns */],
+  __vue_template_functional__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources/assets/js/components/Tests.vue"
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-0218ddfa", Component.options)
+  } else {
+    hotAPI.reload("data-v-0218ddfa", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+/* harmony default export */ __webpack_exports__["a"] = (Component.exports);
+
+
+/***/ }),
+/* 87 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c(
+    "v-container",
+    { attrs: { "grid-list-md": "" } },
+    [
+      _c(
+        "v-layout",
+        { staticClass: "mb-3", attrs: { row: "", wrap: "" } },
+        [
+          _c(
+            "v-flex",
+            { attrs: { xs12: "" } },
+            [
+              _c("v-switch", {
+                attrs: {
+                  label: _vm.uncheckedOnly
+                    ? "Unchecked test results only"
+                    : "All test results"
+                },
+                model: {
+                  value: _vm.uncheckedOnly,
+                  callback: function($$v) {
+                    _vm.uncheckedOnly = $$v
+                  },
+                  expression: "uncheckedOnly"
+                }
+              })
+            ],
+            1
+          ),
+          _vm._v(" "),
+          _vm._l(_vm.tests, function(test, index) {
+            return _c(
+              "v-flex",
+              {
+                key: "test-" + index,
+                attrs: { xs12: "", sm6: "", md4: "", lg4: "", xl3: "" }
+              },
+              [
+                _c(
+                  "v-badge",
+                  {
+                    attrs: { overlap: "", value: !test.checked, color: "red" }
+                  },
+                  [
+                    _c("span", { attrs: { slot: "badge" }, slot: "badge" }, [
+                      _vm._v("!")
+                    ]),
+                    _vm._v(" "),
+                    _c(
+                      "v-card",
+                      { attrs: { height: "100%", hover: "" } },
+                      [
+                        _c("v-card-title", { staticClass: "title" }, [
+                          _vm._v(
+                            "\n            " +
+                              _vm._s(test.disease) +
+                              "\n          "
+                          )
+                        ]),
+                        _vm._v(" "),
+                        _c(
+                          "v-card-text",
+                          [
+                            _c(
+                              "v-layout",
+                              { attrs: { row: "", wrap: "" } },
+                              [
+                                _c(
+                                  "v-flex",
+                                  {
+                                    staticClass: "subheading",
+                                    attrs: { xs6: "" }
+                                  },
+                                  [
+                                    _c("v-icon", [_vm._v("event")]),
+                                    _vm._v(
+                                      "\n                " +
+                                        _vm._s(
+                                          new Date(
+                                            test.date_taken
+                                          ).toLocaleDateString()
+                                        ) +
+                                        "\n              "
+                                    )
+                                  ],
+                                  1
+                                ),
+                                _vm._v(" "),
+                                _c(
+                                  "v-flex",
+                                  {
+                                    staticClass: "subheading",
+                                    attrs: { xs6: "" }
+                                  },
+                                  [
+                                    _c("v-icon", [_vm._v("person")]),
+                                    _vm._v(
+                                      "\n                " +
+                                        _vm._s(
+                                          test.doctor.name +
+                                            " " +
+                                            test.doctor.surname
+                                        ) +
+                                        "\n              "
+                                    )
+                                  ],
+                                  1
+                                ),
+                                _vm._v(" "),
+                                _c(
+                                  "v-flex",
+                                  {
+                                    staticClass: "subheading",
+                                    attrs: { xs12: "" }
+                                  },
+                                  [
+                                    _c("v-icon", [_vm._v("place")]),
+                                    _vm._v(
+                                      "\n                " +
+                                        _vm._s(test.hospital) +
+                                        "\n              "
+                                    )
+                                  ],
+                                  1
+                                )
+                              ],
+                              1
+                            )
+                          ],
+                          1
+                        ),
+                        _vm._v(" "),
+                        _c(
+                          "v-card-actions",
+                          [
+                            _c("v-spacer"),
+                            _vm._v(" "),
+                            _c(
+                              "v-btn",
+                              {
+                                attrs: { color: "primary" },
+                                on: {
+                                  click: function($event) {
+                                    _vm.downloadResult(test.id, test.result)
+                                  }
+                                }
+                              },
+                              [_vm._v("Download")]
+                            ),
+                            _vm._v(" "),
+                            _c("v-spacer")
+                          ],
+                          1
+                        )
+                      ],
+                      1
+                    )
+                  ],
+                  1
+                )
+              ],
+              1
+            )
+          })
+        ],
+        2
+      )
+    ],
+    1
+  )
+}
+var staticRenderFns = []
+render._withStripped = true
+
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+    require("vue-hot-reload-api")      .rerender("data-v-0218ddfa", { render: render, staticRenderFns: staticRenderFns })
   }
 }
 

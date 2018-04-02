@@ -5,27 +5,29 @@ namespace App\Http\Controllers;
 use App\Models\Test;
 use Illuminate\Http\Request;
 
-class TestController extends Controller
-{
+class TestController extends Controller {
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
-    {
+    public function index(Request $request) {
         $query = Test::query();
 
         if ($request->input('patient_id')) {
             $query->where('patient_id', '=', $request->input('patient_id'));
         }
-        if (!$request->input('include_checked')) {
+        if (!($request->input('include_checked') === 'true')) {
             $query->where('checked', false);
         }
+        if ($request->input('with_doctor') === 'true') {
+            $query->with('doctor');
+        }
+        $query->oldest('date_taken');
 
         if ($request->input('count')) {
             return $query->count();
-        } else if ($request->input('first')) {
+        } else if ($request->input('first') === 'true') {
             return $query->first();
         } else {
             return $query->get();
@@ -37,8 +39,7 @@ class TestController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
-    {
+    public function create() {
         //
     }
 
@@ -48,8 +49,7 @@ class TestController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
-    {
+    public function store(Request $request) {
         //
     }
 
@@ -59,9 +59,10 @@ class TestController extends Controller
      * @param  \App\Models\Test  $test
      * @return \Illuminate\Http\Response
      */
-    public function show(Test $test)
-    {
-        //
+    public function show(Test $test) {
+        $test->checked = true;
+        $test->save();
+        return response()->download(storage_path('tests/' . $test->result), $test->result);
     }
 
     /**
@@ -70,8 +71,7 @@ class TestController extends Controller
      * @param  \App\Models\Test  $test
      * @return \Illuminate\Http\Response
      */
-    public function edit(Test $test)
-    {
+    public function edit(Test $test) {
         //
     }
 
@@ -82,8 +82,7 @@ class TestController extends Controller
      * @param  \App\Models\Test  $test
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Test $test)
-    {
+    public function update(Request $request, Test $test) {
         //
     }
 
@@ -93,8 +92,7 @@ class TestController extends Controller
      * @param  \App\Models\Test  $test
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Test $test)
-    {
+    public function destroy(Test $test) {
         //
     }
 }

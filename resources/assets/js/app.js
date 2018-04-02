@@ -15,6 +15,7 @@ import Dashboard from './components/Dashboard.vue';
 import Availability from './components/Availability.vue';
 import Appointments from './components/Appointments.vue';
 import Prescriptions from './components/Prescriptions.vue';
+import Tests from './components/Tests.vue';
 import Calendar from './components/Calendar.vue';
 
 // Utility Components
@@ -94,6 +95,13 @@ const router = new VueRouter({
                 path: '/prescriptions',
                 name: 'prescriptions',
                 component: Prescriptions,
+                meta: {
+                    auth: true
+                }
+            }, {
+                path: '/tests',
+                name: 'tests',
+                component: Tests,
                 meta: {
                     auth: true
                 }

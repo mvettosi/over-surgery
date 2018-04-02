@@ -83,6 +83,12 @@ export default {
           role: "patient"
         },
         {
+          icon: "history",
+          title: "Tests",
+          path: "/tests",
+          role: "patient"
+        },
+        {
           icon: "calendar",
           title: "Calendar",
           path: "/calendar",
@@ -101,7 +107,7 @@ export default {
     "v-material-snackbar": MaterialSnackbar
   },
   created() {
-    this.$router.push("prescriptions");
+    this.$router.push("tests");
   },
   mounted() {
     this.$root.$confirm = this.$refs.confirm;

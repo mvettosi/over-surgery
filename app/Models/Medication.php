@@ -6,9 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Medication extends Model {
     /**
-     * The prescriptions that belong to the medication.
+     * The endorsements that refers to this medication.
      */
-    public function prescriptions() {
-        return $this->belongsToMany('App\Models\Prescription');
+    public function endorsements() {
+        return $this->hasMany('App\Models\Endorsement');
     }
 }

@@ -26,6 +26,15 @@ class PrescriptionController extends Controller {
             $inThreeDays = $now->addDays(3);
             $query->whereDate('expiration_date', '<=', $inThreeDays->toDateString());
         }
+        if ($request->input('with_doctor') === 'true') {
+            $query->with('doctor');
+        }
+        if ($request->input('with_medications') === 'true') {
+            $query->with('endorsements.medication');
+        } else if ($request->input('with_endorsements') === 'true') {
+            $query->with('endorsements');
+        }
+        $query->oldest('expiration_date');
 
         if ($request->input('count')) {
             return $query->count();
@@ -83,7 +92,21 @@ class PrescriptionController extends Controller {
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, Prescription $prescription) {
-        //
+        if ($request->input('extend') === 'true') {
+            if ($prescription->extended) {
+                return response()->json([
+                    'message' => 'The prescription cannot be extended because it was already extended once.',
+                ], 403);
+            }
+
+            $newExp = Carbon::createFromFormat('Y-m-d H:i:s', $prescription->expiration_date);
+            $prescription->expiration_date = $newExp->addMonths(2);
+            $prescription->extended = true;
+        }
+        $prescription->save();
+        return response()->json([
+            'message' => 'The prescription was successfully extended.',
+        ], 200);
     }
 
     /**

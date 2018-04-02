@@ -68,13 +68,30 @@ class DatabaseSchema extends Migration {
 
         Schema::create('prescriptions', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('dose');
-            $table->string('quantity');
             $table->dateTime('expiration_date');
+            $table->boolean('extended')->default(false);
             $table->integer('patient_id')->unsigned();
             $table->foreign('patient_id')->references('id')->on('users');
             $table->integer('doctor_id')->unsigned();
             $table->foreign('doctor_id')->references('id')->on('users');
+            $table->timestamps();
+        });
+
+        Schema::create('medications', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('name');
+            $table->string('number');
+            $table->timestamps();
+        });
+
+        Schema::create('endorsements', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('dose');
+            $table->string('quantity');
+            $table->integer('medication_id')->unsigned();
+            $table->foreign('medication_id')->references('id')->on('medications');
+            $table->integer('prescription_id')->unsigned();
+            $table->foreign('prescription_id')->references('id')->on('prescriptions');
             $table->timestamps();
         });
 
@@ -90,21 +107,6 @@ class DatabaseSchema extends Migration {
             $table->foreign('doctor_id')->references('id')->on('users');
             $table->boolean('checked')->default(false);
             $table->timestamps();
-        });
-
-        Schema::create('medications', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('name');
-            $table->string('number');
-            $table->timestamps();
-        });
-
-        Schema::create('medication_prescription', function (Blueprint $table) {
-            $table->integer('medication_id')->unsigned()->index();
-            $table->foreign('medication_id')->references('id')->on('medications')->onDelete('cascade');
-            $table->integer('prescription_id')->unsigned()->index();
-            $table->foreign('prescription_id')->references('id')->on('prescriptions')->onDelete('cascade');
-            $table->primary(['medication_id', 'prescription_id']);
         });
     }
 

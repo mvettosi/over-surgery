@@ -2608,6 +2608,11 @@ return /******/ (function(modules) { // webpackBootstrap
         path: "/appointments",
         role: "patient"
       }, {
+        icon: "attachment",
+        title: "Prescriptions",
+        path: "/prescriptions",
+        role: "patient"
+      }, {
         icon: "calendar",
         title: "Calendar",
         path: "/calendar",
@@ -2624,7 +2629,7 @@ return /******/ (function(modules) { // webpackBootstrap
     "v-material-snackbar": __WEBPACK_IMPORTED_MODULE_1__MaterialSnackbar_vue__["a" /* default */]
   },
   created: function created() {
-    this.$router.push("appointments");
+    this.$router.push("prescriptions");
   },
   mounted: function mounted() {
     this.$root.$confirm = this.$refs.confirm;
@@ -3485,9 +3490,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__components_Dashboard_vue__ = __webpack_require__(53);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__components_Availability_vue__ = __webpack_require__(55);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__components_Appointments_vue__ = __webpack_require__(57);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__components_Calendar_vue__ = __webpack_require__(59);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_14_vuetify_dist_vuetify_min_css__ = __webpack_require__(61);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_14_vuetify_dist_vuetify_min_css___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_14_vuetify_dist_vuetify_min_css__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__components_Prescriptions_vue__ = __webpack_require__(82);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__components_Calendar_vue__ = __webpack_require__(59);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_15_vuetify_dist_vuetify_min_css__ = __webpack_require__(61);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_15_vuetify_dist_vuetify_min_css___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_15_vuetify_dist_vuetify_min_css__);
 // Imports
 
 
@@ -3497,6 +3503,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 
 // Components
+
 
 
 
@@ -3579,9 +3586,16 @@ var router = new __WEBPACK_IMPORTED_MODULE_1_vue_router__["a" /* default */]({
                 auth: true
             }
         }, {
+            path: '/prescriptions',
+            name: 'prescriptions',
+            component: __WEBPACK_IMPORTED_MODULE_13__components_Prescriptions_vue__["a" /* default */],
+            meta: {
+                auth: true
+            }
+        }, {
             path: '/calendar',
             name: 'calendar',
-            component: __WEBPACK_IMPORTED_MODULE_13__components_Calendar_vue__["a" /* default */],
+            component: __WEBPACK_IMPORTED_MODULE_14__components_Calendar_vue__["a" /* default */],
             meta: {
                 auth: true
             }
@@ -40963,6 +40977,399 @@ if (false) {
   module.hot.accept()
   if (module.hot.data) {
     require("vue-hot-reload-api")      .rerender("data-v-34167f83", { render: render, staticRenderFns: staticRenderFns })
+  }
+}
+
+/***/ }),
+/* 82 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__babel_loader_cacheDirectory_true_presets_env_modules_false_targets_browsers_2_uglify_true_plugins_transform_object_rest_spread_transform_runtime_polyfill_false_helpers_false_node_modules_vue_loader_lib_selector_type_script_index_0_Prescriptions_vue__ = __webpack_require__(83);
+/* unused harmony namespace reexport */
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_79e8a272_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Prescriptions_vue__ = __webpack_require__(84);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__node_modules_vue_loader_lib_runtime_component_normalizer__ = __webpack_require__(1);
+var disposed = false
+/* script */
+
+
+/* template */
+
+/* template functional */
+var __vue_template_functional__ = false
+/* styles */
+var __vue_styles__ = null
+/* scopeId */
+var __vue_scopeId__ = null
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+
+var Component = Object(__WEBPACK_IMPORTED_MODULE_2__node_modules_vue_loader_lib_runtime_component_normalizer__["a" /* default */])(
+  __WEBPACK_IMPORTED_MODULE_0__babel_loader_cacheDirectory_true_presets_env_modules_false_targets_browsers_2_uglify_true_plugins_transform_object_rest_spread_transform_runtime_polyfill_false_helpers_false_node_modules_vue_loader_lib_selector_type_script_index_0_Prescriptions_vue__["a" /* default */],
+  __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_79e8a272_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Prescriptions_vue__["a" /* render */],
+  __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_79e8a272_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Prescriptions_vue__["b" /* staticRenderFns */],
+  __vue_template_functional__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources/assets/js/components/Prescriptions.vue"
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-79e8a272", Component.options)
+  } else {
+    hotAPI.reload("data-v-79e8a272", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+/* harmony default export */ __webpack_exports__["a"] = (Component.exports);
+
+
+/***/ }),
+/* 83 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["a"] = ({
+  data: function data() {
+    return {
+      prescriptions: []
+    };
+  },
+  created: function created() {
+    this.fetchData();
+  },
+
+  methods: {
+    fetchData: function fetchData() {
+      var _this = this;
+
+      this.prescriptions = [];
+      var url = "/prescriptions?with_medications=true&with_doctor=true&patient_id=" + this.$auth.user().id;
+      this.axios.get(url).then(function (response) {
+        response.data.forEach(function (prescription) {
+          prescription.show = false;
+          prescription.summary = "";
+          prescription.endorsements.forEach(function (endorsement, index) {
+            if (index != 0) {
+              prescription.summary += ", ";
+            }
+            prescription.summary += endorsement.medication.name;
+          });
+        });
+        _this.prescriptions = response.data;
+      }).catch(function (e) {
+        _this.$root.$snackbar.open(e.response.data.message, {
+          color: "error"
+        });
+      });
+    },
+    extendPrescription: function extendPrescription(id) {
+      var _this2 = this;
+
+      var url = "/prescriptions/" + id + "?extend=true";
+      this.axios.put(url).then(function (response) {
+        _this2.$root.$snackbar.open(response.data.message, {
+          color: "success"
+        });
+        _this2.fetchData();
+      }).catch(function (e) {
+        _this2.$root.$snackbar.open(e.response.data.message, {
+          color: "error"
+        });
+      });
+    }
+  }
+});
+
+/***/ }),
+/* 84 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c(
+    "v-container",
+    { attrs: { "grid-list-md": "" } },
+    [
+      _c(
+        "v-layout",
+        { staticClass: "mb-3", attrs: { row: "", wrap: "" } },
+        _vm._l(_vm.prescriptions, function(prescription, index) {
+          return _c(
+            "v-flex",
+            {
+              key: "prescription-" + index,
+              attrs: { xs12: "", sm6: "", md4: "", lg4: "", xl3: "" }
+            },
+            [
+              _c(
+                "v-card",
+                { attrs: { hover: "" } },
+                [
+                  _c(
+                    "v-card-text",
+                    [
+                      _c(
+                        "v-layout",
+                        { attrs: { row: "", wrap: "" } },
+                        [
+                          _c(
+                            "v-flex",
+                            { attrs: { xs12: "" } },
+                            [
+                              _c("v-icon", [_vm._v("person")]),
+                              _vm._v(
+                                "\n                            " +
+                                  _vm._s(
+                                    prescription.doctor.name +
+                                      " " +
+                                      prescription.doctor.surname
+                                  ) +
+                                  "\n                        "
+                              )
+                            ],
+                            1
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "v-flex",
+                            { attrs: { xs12: "" } },
+                            [
+                              _c("v-icon", [_vm._v("timer")]),
+                              _vm._v(
+                                "\n                            " +
+                                  _vm._s(prescription.expiration_date) +
+                                  "\n                        "
+                              )
+                            ],
+                            1
+                          ),
+                          _vm._v(" "),
+                          !prescription.show
+                            ? _c(
+                                "v-flex",
+                                { attrs: { xs12: "" } },
+                                [
+                                  _c("v-icon", [
+                                    _vm._v("format-list-bulleted")
+                                  ]),
+                                  _vm._v(
+                                    "\n                            " +
+                                      _vm._s(prescription.summary) +
+                                      "\n                        "
+                                  )
+                                ],
+                                1
+                              )
+                            : _vm._e()
+                        ],
+                        1
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "v-slide-y-transition",
+                        [
+                          _c(
+                            "v-list",
+                            {
+                              directives: [
+                                {
+                                  name: "show",
+                                  rawName: "v-show",
+                                  value: prescription.show,
+                                  expression: "prescription.show"
+                                }
+                              ],
+                              attrs: { "three-line": "" }
+                            },
+                            [
+                              _vm._l(prescription.endorsements, function(
+                                endorsement,
+                                index
+                              ) {
+                                return [
+                                  _c(
+                                    "v-list-tile",
+                                    {
+                                      key: index,
+                                      attrs: { avatar: "", ripple: "" }
+                                    },
+                                    [
+                                      _c(
+                                        "v-list-tile-content",
+                                        [
+                                          _c("v-list-tile-title", [
+                                            _vm._v(
+                                              _vm._s(
+                                                endorsement.medication.name
+                                              )
+                                            )
+                                          ]),
+                                          _vm._v(" "),
+                                          _c(
+                                            "v-list-tile-sub-title",
+                                            { staticClass: "text--primary" },
+                                            [_vm._v(_vm._s(endorsement.dose))]
+                                          ),
+                                          _vm._v(" "),
+                                          _c("v-list-tile-sub-title", [
+                                            _vm._v(_vm._s(endorsement.quantity))
+                                          ])
+                                        ],
+                                        1
+                                      )
+                                    ],
+                                    1
+                                  ),
+                                  _vm._v(" "),
+                                  index + 1 < prescription.endorsements.length
+                                    ? _c("v-divider", {
+                                        key: "divider-" + index
+                                      })
+                                    : _vm._e()
+                                ]
+                              })
+                            ],
+                            2
+                          )
+                        ],
+                        1
+                      )
+                    ],
+                    1
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "v-card-actions",
+                    [
+                      _c("v-spacer"),
+                      _vm._v(" "),
+                      !prescription.extended
+                        ? _c(
+                            "v-btn",
+                            {
+                              attrs: { color: "primary" },
+                              on: {
+                                click: function($event) {
+                                  _vm.extendPrescription(prescription.id)
+                                }
+                              }
+                            },
+                            [_vm._v("Extend")]
+                          )
+                        : _vm._e(),
+                      _vm._v(" "),
+                      _c("v-spacer"),
+                      _vm._v(" "),
+                      _c(
+                        "v-btn",
+                        {
+                          attrs: { icon: "" },
+                          nativeOn: {
+                            click: function($event) {
+                              prescription.show = !prescription.show
+                            }
+                          }
+                        },
+                        [
+                          _c("v-icon", [
+                            _vm._v(
+                              _vm._s(
+                                prescription.show
+                                  ? "keyboard_arrow_down"
+                                  : "keyboard_arrow_up"
+                              )
+                            )
+                          ])
+                        ],
+                        1
+                      )
+                    ],
+                    1
+                  )
+                ],
+                1
+              )
+            ],
+            1
+          )
+        })
+      )
+    ],
+    1
+  )
+}
+var staticRenderFns = []
+render._withStripped = true
+
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+    require("vue-hot-reload-api")      .rerender("data-v-79e8a272", { render: render, staticRenderFns: staticRenderFns })
   }
 }
 

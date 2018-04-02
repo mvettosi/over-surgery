@@ -23,7 +23,7 @@ class TestController extends Controller {
         if ($request->input('with_doctor') === 'true') {
             $query->with('doctor');
         }
-        $query->oldest('date_taken');
+        $query->latest('date_taken');
 
         if ($request->input('count')) {
             return $query->count();

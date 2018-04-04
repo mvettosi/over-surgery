@@ -16,6 +16,7 @@ import Availability from './components/Availability.vue';
 import Appointments from './components/Appointments.vue';
 import Prescriptions from './components/Prescriptions.vue';
 import Tests from './components/Tests.vue';
+import Chat from './components/Chat.vue';
 import Calendar from './components/Calendar.vue';
 
 // Utility Components
@@ -75,46 +76,104 @@ const router = new VueRouter({
                 name: 'dashboard',
                 component: Dashboard,
                 meta: {
-                    auth: true
+                    icon: "dashboard",
+                    title: "Dashboard",
+                    auth: true,
+                    roles: [
+                        'patient'
+                    ],
+                    icon: "dashboard"
                 }
             }, {
                 path: '/availability',
                 name: 'availability',
                 component: Availability,
                 meta: {
-                    auth: true
+                    icon: "person",
+                    title: "Availability",
+                    auth: true,
+                    roles: [
+                        'patient'
+                    ]
                 }
             }, {
                 path: '/appointments',
                 name: 'appointments',
                 component: Appointments,
                 meta: {
-                    auth: true
+                    icon: "event",
+                    title: "Appointments",
+                    auth: true,
+                    roles: [
+                        'patient'
+                    ]
                 }
             }, {
                 path: '/prescriptions',
                 name: 'prescriptions',
                 component: Prescriptions,
                 meta: {
-                    auth: true
+                    icon: "attachment",
+                    title: "Prescriptions",
+                    auth: true,
+                    roles: [
+                        'patient'
+                    ]
                 }
             }, {
                 path: '/tests',
                 name: 'tests',
                 component: Tests,
                 meta: {
-                    auth: true
+                    icon: "history",
+                    title: "Tests",
+                    auth: true,
+                    roles: [
+                        'patient'
+                    ]
                 }
             }, {
                 path: '/calendar',
                 name: 'calendar',
                 component: Calendar,
                 meta: {
-                    auth: true
+                    icon: "calendar",
+                    title: "Calendar",
+                    auth: true,
+                    roles: [
+                        'receptionist'
+                    ]
+                }
+            }, {
+                path: '/chat',
+                name: 'chat',
+                component: Chat,
+                meta: {
+                    icon: "message",
+                    title: "Chat",
+                    auth: true,
+                    roles: [
+                        'patient',
+                        'receptionist'
+                    ]
                 }
             }
         ]
     }]
+});
+router.beforeEach((to, from, next) => {
+    let user = JSON.parse(window.localStorage.getItem('auth-user'));
+    if (to.meta.roles && !to.meta.roles.includes(user.account_type)) {
+        switch (user.account_type) {
+            case 'patient':
+                next('dashboard');
+                break;
+            case 'receptionist':
+                next('calendar');
+                break;
+        }
+    }
+    next();
 });
 Vue.router = router;
 Vue.use(require('@websanova/vue-auth'), {

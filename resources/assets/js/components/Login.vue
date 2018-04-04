@@ -59,12 +59,17 @@ export default {
           username: app.username,
           password: app.password
         },
-        success: function() {},
+        success: function() {
+          window.localStorage.setItem(
+            "auth-user",
+            JSON.stringify(this.$auth.user())
+          );
+        },
         error: function() {
           app.loginFailed = true;
         },
         rememberMe: true,
-        redirect: "/home",
+        redirect: "/dashboard",
         fetchUser: true
       });
     }

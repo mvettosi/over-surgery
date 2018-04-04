@@ -15,12 +15,12 @@
             </v-toolbar>
             <v-divider></v-divider>
             <v-list dense class="pt-0">
-                <v-list-tile v-for="item in items" v-if="item.role === $auth.user().account_type" :key="item.title" :to="item.path">
+                <v-list-tile v-for="route in routes" v-if="route.meta.roles.includes($auth.user().account_type)" :key="route.meta.title" :to="route.path">
                     <v-list-tile-action>
-                        <v-icon>{{ item.icon }}</v-icon>
+                        <v-icon>{{ route.meta.icon }}</v-icon>
                     </v-list-tile-action>
                     <v-list-tile-content>
-                        <v-list-tile-title>{{ item.title }}</v-list-tile-title>
+                        <v-list-tile-title>{{ route.meta.title }}</v-list-tile-title>
                     </v-list-tile-content>
                 </v-list-tile>
             </v-list>
@@ -57,44 +57,7 @@ export default {
     return {
       drawer: true,
       clipped: false,
-      items: [
-        {
-          icon: "dashboard",
-          title: "Dashboard",
-          path: "/dashboard",
-          role: "patient"
-        },
-        {
-          icon: "person",
-          title: "Availability",
-          path: "/availability",
-          role: "patient"
-        },
-        {
-          icon: "event",
-          title: "Appointments",
-          path: "/appointments",
-          role: "patient"
-        },
-        {
-          icon: "attachment",
-          title: "Prescriptions",
-          path: "/prescriptions",
-          role: "patient"
-        },
-        {
-          icon: "history",
-          title: "Tests",
-          path: "/tests",
-          role: "patient"
-        },
-        {
-          icon: "calendar",
-          title: "Calendar",
-          path: "/calendar",
-          role: "receptionist"
-        }
-      ],
+      routes: [],
       menus: [
         {
           title: "Logout"
@@ -107,11 +70,12 @@ export default {
     "v-material-snackbar": MaterialSnackbar
   },
   created() {
-    this.$router.push("tests");
+    this.$router.push("chat");
   },
   mounted() {
     this.$root.$confirm = this.$refs.confirm;
     this.$root.$snackbar = this.$refs.snackbar;
+    this.routes = this.$router.options.routes[3].children;
   },
   methods: {
     menuAction(title) {

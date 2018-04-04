@@ -2592,37 +2592,7 @@ return /******/ (function(modules) { // webpackBootstrap
     return {
       drawer: true,
       clipped: false,
-      items: [{
-        icon: "dashboard",
-        title: "Dashboard",
-        path: "/dashboard",
-        role: "patient"
-      }, {
-        icon: "person",
-        title: "Availability",
-        path: "/availability",
-        role: "patient"
-      }, {
-        icon: "event",
-        title: "Appointments",
-        path: "/appointments",
-        role: "patient"
-      }, {
-        icon: "attachment",
-        title: "Prescriptions",
-        path: "/prescriptions",
-        role: "patient"
-      }, {
-        icon: "history",
-        title: "Tests",
-        path: "/tests",
-        role: "patient"
-      }, {
-        icon: "calendar",
-        title: "Calendar",
-        path: "/calendar",
-        role: "receptionist"
-      }],
+      routes: [],
       menus: [{
         title: "Logout"
       }]
@@ -2634,11 +2604,12 @@ return /******/ (function(modules) { // webpackBootstrap
     "v-material-snackbar": __WEBPACK_IMPORTED_MODULE_1__MaterialSnackbar_vue__["a" /* default */]
   },
   created: function created() {
-    this.$router.push("tests");
+    this.$router.push("chat");
   },
   mounted: function mounted() {
     this.$root.$confirm = this.$refs.confirm;
     this.$root.$snackbar = this.$refs.snackbar;
+    this.routes = this.$router.options.routes[3].children;
   },
 
   methods: {
@@ -2900,12 +2871,14 @@ return /******/ (function(modules) { // webpackBootstrap
           username: app.username,
           password: app.password
         },
-        success: function success() {},
+        success: function success() {
+          window.localStorage.setItem("auth-user", JSON.stringify(this.$auth.user()));
+        },
         error: function error() {
           app.loginFailed = true;
         },
         rememberMe: true,
-        redirect: "/home",
+        redirect: "/dashboard",
         fetchUser: true
       });
     }
@@ -3497,9 +3470,12 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__components_Appointments_vue__ = __webpack_require__(57);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__components_Prescriptions_vue__ = __webpack_require__(82);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__components_Tests_vue__ = __webpack_require__(86);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__components_Calendar_vue__ = __webpack_require__(59);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_16_vuetify_dist_vuetify_min_css__ = __webpack_require__(61);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_16_vuetify_dist_vuetify_min_css___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_16_vuetify_dist_vuetify_min_css__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__components_Chat_vue__ = __webpack_require__(88);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_16__components_Calendar_vue__ = __webpack_require__(59);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_17_vuetify_dist_vuetify_min_css__ = __webpack_require__(61);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_17_vuetify_dist_vuetify_min_css___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_17_vuetify_dist_vuetify_min_css__);
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 // Imports
 
 
@@ -3509,6 +3485,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 
 // Components
+
 
 
 
@@ -3575,46 +3552,88 @@ var router = new __WEBPACK_IMPORTED_MODULE_1_vue_router__["a" /* default */]({
             path: '/dashboard',
             name: 'dashboard',
             component: __WEBPACK_IMPORTED_MODULE_10__components_Dashboard_vue__["a" /* default */],
-            meta: {
-                auth: true
-            }
+            meta: _defineProperty({
+                icon: "dashboard",
+                title: "Dashboard",
+                auth: true,
+                roles: ['patient']
+            }, 'icon', "dashboard")
         }, {
             path: '/availability',
             name: 'availability',
             component: __WEBPACK_IMPORTED_MODULE_11__components_Availability_vue__["a" /* default */],
             meta: {
-                auth: true
+                icon: "person",
+                title: "Availability",
+                auth: true,
+                roles: ['patient']
             }
         }, {
             path: '/appointments',
             name: 'appointments',
             component: __WEBPACK_IMPORTED_MODULE_12__components_Appointments_vue__["a" /* default */],
             meta: {
-                auth: true
+                icon: "event",
+                title: "Appointments",
+                auth: true,
+                roles: ['patient']
             }
         }, {
             path: '/prescriptions',
             name: 'prescriptions',
             component: __WEBPACK_IMPORTED_MODULE_13__components_Prescriptions_vue__["a" /* default */],
             meta: {
-                auth: true
+                icon: "attachment",
+                title: "Prescriptions",
+                auth: true,
+                roles: ['patient']
             }
         }, {
             path: '/tests',
             name: 'tests',
             component: __WEBPACK_IMPORTED_MODULE_14__components_Tests_vue__["a" /* default */],
             meta: {
-                auth: true
+                icon: "history",
+                title: "Tests",
+                auth: true,
+                roles: ['patient']
             }
         }, {
             path: '/calendar',
             name: 'calendar',
-            component: __WEBPACK_IMPORTED_MODULE_15__components_Calendar_vue__["a" /* default */],
+            component: __WEBPACK_IMPORTED_MODULE_16__components_Calendar_vue__["a" /* default */],
             meta: {
-                auth: true
+                icon: "calendar",
+                title: "Calendar",
+                auth: true,
+                roles: ['receptionist']
+            }
+        }, {
+            path: '/chat',
+            name: 'chat',
+            component: __WEBPACK_IMPORTED_MODULE_15__components_Chat_vue__["a" /* default */],
+            meta: {
+                icon: "message",
+                title: "Chat",
+                auth: true,
+                roles: ['patient', 'receptionist']
             }
         }]
     }]
+});
+router.beforeEach(function (to, from, next) {
+    var user = JSON.parse(window.localStorage.getItem('auth-user'));
+    if (to.meta.roles && !to.meta.roles.includes(user.account_type)) {
+        switch (user.account_type) {
+            case 'patient':
+                next('dashboard');
+                break;
+            case 'receptionist':
+                next('calendar');
+                break;
+        }
+    }
+    next();
 });
 __WEBPACK_IMPORTED_MODULE_0_vue___default.a.router = router;
 __WEBPACK_IMPORTED_MODULE_0_vue___default.a.use(__webpack_require__(66), {
@@ -36018,21 +36037,25 @@ var render = function() {
           _c(
             "v-list",
             { staticClass: "pt-0", attrs: { dense: "" } },
-            _vm._l(_vm.items, function(item) {
-              return item.role === _vm.$auth.user().account_type
+            _vm._l(_vm.routes, function(route) {
+              return route.meta.roles.includes(_vm.$auth.user().account_type)
                 ? _c(
                     "v-list-tile",
-                    { key: item.title, attrs: { to: item.path } },
+                    { key: route.meta.title, attrs: { to: route.path } },
                     [
                       _c(
                         "v-list-tile-action",
-                        [_c("v-icon", [_vm._v(_vm._s(item.icon))])],
+                        [_c("v-icon", [_vm._v(_vm._s(route.meta.icon))])],
                         1
                       ),
                       _vm._v(" "),
                       _c(
                         "v-list-tile-content",
-                        [_c("v-list-tile-title", [_vm._v(_vm._s(item.title))])],
+                        [
+                          _c("v-list-tile-title", [
+                            _vm._v(_vm._s(route.meta.title))
+                          ])
+                        ],
                         1
                       )
                     ],
@@ -41726,6 +41749,80 @@ if (false) {
   module.hot.accept()
   if (module.hot.data) {
     require("vue-hot-reload-api")      .rerender("data-v-0218ddfa", { render: render, staticRenderFns: staticRenderFns })
+  }
+}
+
+/***/ }),
+/* 88 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__node_modules_vue_loader_lib_template_compiler_index_id_data_v_3f23c80f_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Chat_vue__ = __webpack_require__(89);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_runtime_component_normalizer__ = __webpack_require__(1);
+var disposed = false
+/* script */
+var __vue_script__ = null
+/* template */
+
+/* template functional */
+var __vue_template_functional__ = false
+/* styles */
+var __vue_styles__ = null
+/* scopeId */
+var __vue_scopeId__ = null
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+
+var Component = Object(__WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_runtime_component_normalizer__["a" /* default */])(
+  __vue_script__,
+  __WEBPACK_IMPORTED_MODULE_0__node_modules_vue_loader_lib_template_compiler_index_id_data_v_3f23c80f_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Chat_vue__["a" /* render */],
+  __WEBPACK_IMPORTED_MODULE_0__node_modules_vue_loader_lib_template_compiler_index_id_data_v_3f23c80f_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Chat_vue__["b" /* staticRenderFns */],
+  __vue_template_functional__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources/assets/js/components/Chat.vue"
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-3f23c80f", Component.options)
+  } else {
+    hotAPI.reload("data-v-3f23c80f", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+/* harmony default export */ __webpack_exports__["a"] = (Component.exports);
+
+
+/***/ }),
+/* 89 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("div")
+}
+var staticRenderFns = []
+render._withStripped = true
+
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+    require("vue-hot-reload-api")      .rerender("data-v-3f23c80f", { render: render, staticRenderFns: staticRenderFns })
   }
 }
 

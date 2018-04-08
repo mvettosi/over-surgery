@@ -4,22 +4,24 @@ import VueRouter from 'vue-router';
 import axios from 'axios';
 import VueAxios from 'vue-axios';
 import Vuetify from 'vuetify';
-import fullCalendar from 'vue-fullcalendar'
 
-// Components
+// Pages
 import App from './App.vue';
 import Home from './components/Home.vue';
-import Register from './components/Register.vue';
-import Login from './components/Login.vue';
-import Dashboard from './components/Dashboard.vue';
-import Availability from './components/Availability.vue';
-import Appointments from './components/Appointments.vue';
-import Prescriptions from './components/Prescriptions.vue';
-import Tests from './components/Tests.vue';
-import Chat from './components/Chat.vue';
-import Calendar from './components/Calendar.vue';
+import Register from './components/pages//Register.vue';
+import Login from './components/pages//Login.vue';
+import Dashboard from './components/pages//Dashboard.vue';
+import Availability from './components/pages//Availability.vue';
+import Appointments from './components/pages//Appointments.vue';
+import Prescriptions from './components/pages//Prescriptions.vue';
+import Tests from './components/pages//Tests.vue';
+import Chat from './components/pages//Chat.vue';
+import Calendar from './components/pages//Calendar.vue';
 
-// Utility Components
+// Utility
+import fullCalendar from 'vue-fullcalendar'
+import Confirm from "./components/utility/Confirm.vue";
+import MaterialSnackbar from "./components/utility/MaterialSnackbar.vue";
 
 // Css
 import 'vuetify/dist/vuetify.min.css';
@@ -38,7 +40,11 @@ Vue.use(Vuetify, {
         success: "#78909C"
     }
 });
+
+// Components
 Vue.component('full-calendar', fullCalendar);
+Vue.component('v-confirm', Confirm);
+Vue.component('v-material-snackbar', MaterialSnackbar);
 
 axios.defaults.baseURL = 'http://over-surgery.test/api';
 const router = new VueRouter({

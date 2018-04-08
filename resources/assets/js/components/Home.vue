@@ -50,8 +50,6 @@
     </v-app>
 </template>
 <script>
-import Confirm from "./Confirm.vue";
-import MaterialSnackbar from "./MaterialSnackbar.vue";
 export default {
   data() {
     return {
@@ -64,10 +62,6 @@ export default {
         }
       ]
     };
-  },
-  components: {
-    "v-confirm": Confirm,
-    "v-material-snackbar": MaterialSnackbar
   },
   created() {
     this.$router.push("chat");

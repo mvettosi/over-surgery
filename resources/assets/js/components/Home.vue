@@ -27,7 +27,7 @@
         </v-navigation-drawer>
         <v-toolbar fixed dark app :clipped-left="clipped" color="primary">
             <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
-            <v-toolbar-title class="white--text">Over Surgery</v-toolbar-title>
+            <v-toolbar-title class="white--text">{{ $route.meta.title }}</v-toolbar-title>
             <v-spacer></v-spacer>
             <v-menu bottom left>
                 <v-btn icon slot="activator">

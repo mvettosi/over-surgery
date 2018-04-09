@@ -108,6 +108,14 @@ class DatabaseSchema extends Migration {
             $table->boolean('checked')->default(false);
             $table->timestamps();
         });
+
+        Schema::create('messages', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('message');
+            $table->integer('user_id')->unsigned();
+            $table->foreign('user_id')->references('id')->on('prescriptions');
+            $table->timestamps();
+        });
     }
 
     /**

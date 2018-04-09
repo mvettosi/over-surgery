@@ -1,4 +1,5 @@
 // Imports
+// require('./bootstrap');
 import Vue from 'vue';
 import VueRouter from 'vue-router';
 import axios from 'axios';
@@ -22,6 +23,9 @@ import Calendar from './components/pages//Calendar.vue';
 import fullCalendar from 'vue-fullcalendar'
 import Confirm from "./components/utility/Confirm.vue";
 import MaterialSnackbar from "./components/utility/MaterialSnackbar.vue";
+import ChatMessage from "./components/utility/ChatMessage.vue";
+import ChatLog from "./components/utility/ChatLog.vue";
+import ChatComposer from "./components/utility/ChatComposer.vue";
 
 // Css
 import 'vuetify/dist/vuetify.min.css';
@@ -45,6 +49,9 @@ Vue.use(Vuetify, {
 Vue.component('full-calendar', fullCalendar);
 Vue.component('v-confirm', Confirm);
 Vue.component('v-material-snackbar', MaterialSnackbar);
+Vue.component('chat-message', ChatMessage);
+Vue.component('chat-log', ChatLog);
+Vue.component('chat-composer', ChatComposer);
 
 axios.defaults.baseURL = 'http://over-surgery.test/api';
 const router = new VueRouter({

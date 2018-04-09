@@ -16,6 +16,7 @@ class DatabaseSeeder extends Seeder {
         factory(App\Models\Medication::class, 10)->create();
         factory(App\Models\Prescription::class, 15)->create();
         factory(App\Models\Endorsement::class, 50)->create();
+        factory(App\Models\Message::class, 5)->create();
         // factory(App\Models\Prescription::class, 50)->create()->each(function ($prescription) {
         //     $prescription->medications()->sync(
         //         App\Models\Medication::all()->random(3)

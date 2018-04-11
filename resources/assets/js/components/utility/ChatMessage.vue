@@ -1,16 +1,16 @@
 <template>
     <v-card class="chat-message">
-        <small class="subheading">{{ message.user.name + ' ' + message.user.surname }}:</small>
+        <small class="subheading">{{ message.sender.name + ' ' + message.sender.surname }}:</small>
         <p class="title">{{ message.message }}</p>
     </v-card>
 </template>
 
 <script>
 export default {
-  data() {
-    return {};
-  },
-  props: ["message"]
+    data() {
+        return {};
+    },
+    props: ["message"]
 };
 </script>
 

@@ -48,57 +48,57 @@
 </template>
 <script>
 export default {
-  data() {
-    return {
-      prescriptions: []
-    };
-  },
-  created() {
-    this.fetchData();
-  },
-  methods: {
-    fetchData() {
-      this.prescriptions = [];
-      var url =
-        "/prescriptions?with_medications=true&with_doctor=true&patient_id=" +
-        this.$auth.user().id;
-      this.axios
-        .get(url)
-        .then(response => {
-          response.data.forEach(function(prescription) {
-            prescription.show = false;
-            prescription.summary = "";
-            prescription.endorsements.forEach(function(endorsement, index) {
-              if (index != 0) {
-                prescription.summary += ", ";
-              }
-              prescription.summary += endorsement.medication.name;
-            });
-          });
-          this.prescriptions = response.data;
-        })
-        .catch(e => {
-          this.$root.$snackbar.open(e.response.data.message, {
-            color: "error"
-          });
-        });
+    data() {
+        return {
+            prescriptions: []
+        };
     },
-    extendPrescription(id) {
-      var url = "/prescriptions/" + id + "?extend=true";
-      this.axios
-        .put(url)
-        .then(response => {
-          this.$root.$snackbar.open(response.data.message, {
-            color: "success"
-          });
-          this.fetchData();
-        })
-        .catch(e => {
-          this.$root.$snackbar.open(e.response.data.message, {
-            color: "error"
-          });
-        });
+    created() {
+        this.fetchData();
+    },
+    methods: {
+        fetchData() {
+            this.prescriptions = [];
+            var url =
+                "/prescriptions?with_medications=true&with_doctor=true&patient_id=" +
+                this.$auth.user().id;
+            this.axios
+                .get(url)
+                .then(response => {
+                    response.data.forEach(function (prescription) {
+                        prescription.show = false;
+                        prescription.summary = "";
+                        prescription.endorsements.forEach(function (endorsement, index) {
+                            if (index != 0) {
+                                prescription.summary += ", ";
+                            }
+                            prescription.summary += endorsement.medication.name;
+                        });
+                    });
+                    this.prescriptions = response.data;
+                })
+                .catch(e => {
+                    this.$root.$snackbar.open(e.response.data.message, {
+                        color: "error"
+                    });
+                });
+        },
+        extendPrescription(id) {
+            var url = "/prescriptions/" + id + "?extend=true";
+            this.axios
+                .put(url)
+                .then(response => {
+                    this.$root.$snackbar.open(response.data.message, {
+                        color: "success"
+                    });
+                    this.fetchData();
+                })
+                .catch(e => {
+                    this.$root.$snackbar.open(e.response.data.message, {
+                        color: "error"
+                    });
+                });
+        }
     }
-  }
 };
 </script>

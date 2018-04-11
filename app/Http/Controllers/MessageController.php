@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Events\MessagePosted;
+use App\Events\ChatRequest;
+use App\Events\MessageSent;
 use App\Models\Message;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -15,8 +16,21 @@ class MessageController extends Controller {
      *
      * @return \Illuminate\Http\Response
      */
-    public function index() {
-        return Message::with('user')->get();
+    public function index(Request $request) {
+        $query = Message::query();
+        if ($request->input('requests') === 'true') {
+            $query->where('recipient_id', null);
+        }
+        $query->with('sender');
+        $query->with('recipient');
+
+        if ($request->input('count')) {
+            return $query->count();
+        } else if ($request->input('first') === 'true') {
+            return $query->first();
+        } else {
+            return $query->get();
+        }
     }
 
     /**
@@ -36,9 +50,13 @@ class MessageController extends Controller {
      */
     public function store(Request $request) {
         $currentUser = Auth::user();
-        $validator = Validator::make($request->all(), [
+        $validations = [
             'message' => 'required',
-        ]);
+        ];
+        if ($currentUser->account_type == 'receptionist') {
+            $validations[] = ['recipient_id' => 'required'];
+        }
+        $validator = Validator::make($request->all(), $validations);
         if ($validator->fails()) {
             return response()->json([
                 'errors' => $validator->errors(),
@@ -47,14 +65,19 @@ class MessageController extends Controller {
 
         $message = new Message;
         $message->message = $request->message;
-        $message->user_id = $currentUser->id;
+        $message->sender_id = $currentUser->id;
+        $message->recipient_id = $request->recipient_id;
+        $message->sender_type = $currentUser->account_type;
         $message->save();
 
-        event(new MessagePosted($message, $currentUser));
+        if ($currentUser->account_type == 'patient' && (!$request->receptionist_id || $request->receptionist_id == '')) {
+            //Message from patient without recipient: it's a chat request
+            event(new ChatRequest(Message::with('sender')->with('recipient')->find($message->id)));
+        } else {
+            event(new MessageSent($message));
+        }
 
-        return response()->json([
-            'message' => 'Message created.',
-        ], 200);
+        return response()->json($message, 200);
     }
 
     /**
@@ -85,7 +108,6 @@ class MessageController extends Controller {
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, Message $message) {
-        //
     }
 
     /**
@@ -95,6 +117,9 @@ class MessageController extends Controller {
      * @return \Illuminate\Http\Response
      */
     public function destroy(Message $message) {
-        //
+        $message->delete();
+        return response()->json([
+            'message' => 'The message was successfully deleted.',
+        ], 200);
     }
 }

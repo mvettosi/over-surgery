@@ -112,8 +112,11 @@ class DatabaseSchema extends Migration {
         Schema::create('messages', function (Blueprint $table) {
             $table->increments('id');
             $table->string('message');
-            $table->integer('user_id')->unsigned();
-            $table->foreign('user_id')->references('id')->on('prescriptions');
+            $table->integer('sender_id')->unsigned();
+            $table->foreign('sender_id')->references('id')->on('users');
+            $table->integer('recipient_id')->unsigned()->nullable();
+            $table->foreign('recipient_id')->references('id')->on('users');
+            $table->enum('sender_type', array('receptionist', 'patient'));
             $table->timestamps();
         });
     }

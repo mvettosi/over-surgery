@@ -2072,55 +2072,55 @@ module.exports = Cancel;
 //
 
 /* harmony default export */ __webpack_exports__["a"] = ({
-  data: function data() {
-    return {
-      prescriptions: []
-    };
-  },
-  created: function created() {
-    this.fetchData();
-  },
-
-  methods: {
-    fetchData: function fetchData() {
-      var _this = this;
-
-      this.prescriptions = [];
-      var url = "/prescriptions?with_medications=true&with_doctor=true&patient_id=" + this.$auth.user().id;
-      this.axios.get(url).then(function (response) {
-        response.data.forEach(function (prescription) {
-          prescription.show = false;
-          prescription.summary = "";
-          prescription.endorsements.forEach(function (endorsement, index) {
-            if (index != 0) {
-              prescription.summary += ", ";
-            }
-            prescription.summary += endorsement.medication.name;
-          });
-        });
-        _this.prescriptions = response.data;
-      }).catch(function (e) {
-        _this.$root.$snackbar.open(e.response.data.message, {
-          color: "error"
-        });
-      });
+    data: function data() {
+        return {
+            prescriptions: []
+        };
     },
-    extendPrescription: function extendPrescription(id) {
-      var _this2 = this;
+    created: function created() {
+        this.fetchData();
+    },
 
-      var url = "/prescriptions/" + id + "?extend=true";
-      this.axios.put(url).then(function (response) {
-        _this2.$root.$snackbar.open(response.data.message, {
-          color: "success"
-        });
-        _this2.fetchData();
-      }).catch(function (e) {
-        _this2.$root.$snackbar.open(e.response.data.message, {
-          color: "error"
-        });
-      });
+    methods: {
+        fetchData: function fetchData() {
+            var _this = this;
+
+            this.prescriptions = [];
+            var url = "/prescriptions?with_medications=true&with_doctor=true&patient_id=" + this.$auth.user().id;
+            this.axios.get(url).then(function (response) {
+                response.data.forEach(function (prescription) {
+                    prescription.show = false;
+                    prescription.summary = "";
+                    prescription.endorsements.forEach(function (endorsement, index) {
+                        if (index != 0) {
+                            prescription.summary += ", ";
+                        }
+                        prescription.summary += endorsement.medication.name;
+                    });
+                });
+                _this.prescriptions = response.data;
+            }).catch(function (e) {
+                _this.$root.$snackbar.open(e.response.data.message, {
+                    color: "error"
+                });
+            });
+        },
+        extendPrescription: function extendPrescription(id) {
+            var _this2 = this;
+
+            var url = "/prescriptions/" + id + "?extend=true";
+            this.axios.put(url).then(function (response) {
+                _this2.$root.$snackbar.open(response.data.message, {
+                    color: "success"
+                });
+                _this2.fetchData();
+            }).catch(function (e) {
+                _this2.$root.$snackbar.open(e.response.data.message, {
+                    color: "error"
+                });
+            });
+        }
     }
-  }
 });
 
 /***/ }),
@@ -2322,80 +2322,154 @@ function toComment(sourceMap) {
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["a"] = ({
-  data: function data() {
-    return {
-      messages: [],
-      chatComposerHeight: "80px"
-    };
-  },
-  created: function created() {
-    var _this = this;
-
-    this.fetchMessages();
-
-    window.Pusher = __webpack_require__(117);
-    window.Pusher.logToConsole = true;
-
-    window.Echo = new __WEBPACK_IMPORTED_MODULE_0_laravel_echo___default.a({
-      broadcaster: "pusher",
-      key: "d938cb185137de48fd3a",
-      cluster: "eu",
-      encrypted: true,
-      auth: {
-        headers: {
-          Authorization: "Bearer " + this.$auth.token()
-        }
-      }
-    });
-
-    window.Echo.join("chatroom").here(function (users) {
-      //
-    }).joining(function (user) {
-      console.log(user.name);
-    }).leaving(function (user) {
-      console.log(user.name);
-    }).listen("MessagePosted", function (e) {
-      _this.messages.push({
-        message: e.message.message,
-        user: e.user
-      });
-    });
-  },
-
-  methods: {
-    addMessage: function addMessage(message) {
-      var _this2 = this;
-
-      this.messages.push({
-        message: message,
-        user: this.$auth.user()
-      });
-      var url = "/messages";
-      this.axios.post(url, {
-        message: message
-      }).then(function (response) {}).catch(function (e) {
-        _this2.$root.$snackbar.open(e.response.data.message, {
-          color: "error"
-        });
-      });
+    data: function data() {
+        return {
+            Pusher: null,
+            Echo: null,
+            messageText: "",
+            messages: [],
+            awaitingConnection: false,
+            recipientId: null,
+            chatComposerHeight: "80px"
+        };
     },
-    fetchMessages: function fetchMessages() {
-      var _this3 = this;
-
-      this.messages = [];
-      var url = "/messages";
-      this.axios.get(url).then(function (response) {
-        _this3.messages = response.data;
-      }).catch(function (e) {
-        _this3.$root.$snackbar.open(e.response.data.message, {
-          color: "error"
+    created: function created() {
+        this.Pusher = __webpack_require__(117);
+        this.Echo = new __WEBPACK_IMPORTED_MODULE_0_laravel_echo___default.a({
+            broadcaster: "pusher",
+            key: "d938cb185137de48fd3a",
+            cluster: "eu",
+            encrypted: true,
+            auth: {
+                headers: {
+                    Authorization: "Bearer " + this.$auth.token()
+                }
+            }
         });
-      });
+        window.onbeforeunload = this.closeChat;
+
+        if (this.$auth.user().account_type === "receptionist") {
+            this.fetchRequests();
+        }
+        this.joinPairingChannel();
+        // this.Echo.join("user-4").listen("MessageSent", this.eventReceived);
+    },
+
+    methods: {
+        addMessage: function addMessage() {
+            var url = "/messages";
+            if (this.$auth.user().account_type === "patient" && this.messages.length == 0) {
+                this.requestChat();
+            } else {
+                this.sendPrivateMessage();
+            }
+        },
+        requestChat: function requestChat() {
+            var _this = this;
+
+            var url = "/messages";
+            this.axios.post(url, {
+                message: this.messageText
+            }).then(function (response) {
+                var msg = response.data;
+                msg.sender = _this.$auth.user();
+                _this.messages.push(msg);
+                _this.Echo.private("user-" + _this.$auth.user().id).listen("MessageSent", _this.eventReceived);
+                _this.awaitingConnection = true;
+                _this.messageText = "";
+            }).catch(function (e) {
+                _this.messages = [];
+                _this.$root.$snackbar.open(e.response.data.message, {
+                    color: "error"
+                });
+            });
+        },
+        sendPrivateMessage: function sendPrivateMessage() {
+            var _this2 = this;
+
+            // TODO
+            this.axios.post(url, {
+                message: this.messageText,
+                recipientId: this.recipientId
+            }).then(function (response) {
+                _this2.awaitingConnection = true;
+            }).catch(function (e) {
+                _this2.$root.$snackbar.open(e.response.data.message, {
+                    color: "error"
+                });
+            });
+        },
+        eventReceived: function eventReceived(e) {
+            if (this.$auth.user().account_type === "receptionist") {
+                this.messages.push(e.message);
+            }
+        },
+        closeChat: function closeChat() {
+            var _this3 = this;
+
+            // The request was sent but is being resigned before any receptionist could pick it up
+            if (this.awaitingConnection) {
+                var url = "/messages/" + this.messages[0].id;
+                this.axios.delete(url).then(function (response) {
+                    _this3.cleanChatLog();
+                    _this3.Echo.leave('pairing-channel');
+                    _this3.joinPairingChannel();
+                }).catch(function (e) {
+                    _this3.$root.$snackbar.open(e.response.data.message, {
+                        color: "error"
+                    });
+                });
+            }
+        },
+        cleanChatLog: function cleanChatLog() {
+            this.messages = [];
+            this.awaitingConnection = false;
+            this.Echo.leave();
+        },
+        joinPairingChannel: function joinPairingChannel() {
+            var _this4 = this;
+
+            this.Echo.join("pairing-channel").here(function (users) {}).joining(function (user) {
+                console.log(user.name + " " + user.surname + " has entered");
+            }).leaving(function (user) {
+                if (_this4.$auth.user().account_type === "receptionist") {
+                    _this4.messages = _this4.messages.filter(function (message) {
+                        message.sender_id != user.id;
+                    });
+                }
+            }).listen("ChatRequest", this.eventReceived);
+        },
+        fetchRequests: function fetchRequests() {
+            var _this5 = this;
+
+            this.messages = [];
+            var url = "/messages?requests=true";
+            this.axios.get(url).then(function (response) {
+                _this5.messages = response.data;
+            }).catch(function (e) {
+                _this5.$root.$snackbar.open(e.response.data.message, {
+                    color: "error"
+                });
+            });
+        }
     }
-  }
 });
 
 /***/ }),
@@ -4101,13 +4175,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_18__components_utility_MaterialSnackbar_vue__ = __webpack_require__(80);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_19__components_utility_ChatMessage_vue__ = __webpack_require__(96);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_20__components_utility_ChatLog_vue__ = __webpack_require__(101);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_21__components_utility_ChatComposer_vue__ = __webpack_require__(106);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_22_vuetify_dist_vuetify_min_css__ = __webpack_require__(82);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_22_vuetify_dist_vuetify_min_css___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_22_vuetify_dist_vuetify_min_css__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_21_vuetify_dist_vuetify_min_css__ = __webpack_require__(82);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_21_vuetify_dist_vuetify_min_css___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_21_vuetify_dist_vuetify_min_css__);
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 // Imports
-// require('./bootstrap');
 
 
 
@@ -4128,7 +4200,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 
 // Utility
-
 
 
 
@@ -4159,7 +4230,6 @@ __WEBPACK_IMPORTED_MODULE_0_vue___default.a.component('v-confirm', __WEBPACK_IMP
 __WEBPACK_IMPORTED_MODULE_0_vue___default.a.component('v-material-snackbar', __WEBPACK_IMPORTED_MODULE_18__components_utility_MaterialSnackbar_vue__["a" /* default */]);
 __WEBPACK_IMPORTED_MODULE_0_vue___default.a.component('chat-message', __WEBPACK_IMPORTED_MODULE_19__components_utility_ChatMessage_vue__["a" /* default */]);
 __WEBPACK_IMPORTED_MODULE_0_vue___default.a.component('chat-log', __WEBPACK_IMPORTED_MODULE_20__components_utility_ChatLog_vue__["a" /* default */]);
-__WEBPACK_IMPORTED_MODULE_0_vue___default.a.component('chat-composer', __WEBPACK_IMPORTED_MODULE_21__components_utility_ChatComposer_vue__["a" /* default */]);
 
 __WEBPACK_IMPORTED_MODULE_2_axios___default.a.defaults.baseURL = 'http://over-surgery.test/api';
 var router = new __WEBPACK_IMPORTED_MODULE_1_vue_router__["a" /* default */]({
@@ -40023,7 +40093,7 @@ exports = module.exports = __webpack_require__(18)(false);
 
 
 // module
-exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
+exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
 
 // exports
 
@@ -40309,7 +40379,27 @@ var render = function() {
   return _c(
     "v-container",
     [
-      _c("v-layout", { attrs: { row: "" } }, [_c("h1", [_vm._v("Chat")])]),
+      _c(
+        "v-layout",
+        { attrs: { row: "" } },
+        [
+          _c("v-spacer"),
+          _vm._v(" "),
+          _c(
+            "v-btn",
+            {
+              attrs: { color: "primary", disabled: _vm.messages.length == 0 },
+              on: { click: _vm.closeChat }
+            },
+            [
+              _vm._v("Close Chat  \n            "),
+              _c("v-icon", [_vm._v("close")])
+            ],
+            1
+          )
+        ],
+        1
+      ),
       _vm._v(" "),
       _c(
         "v-layout",
@@ -40324,7 +40414,77 @@ var render = function() {
           style: { height: _vm.chatComposerHeight },
           attrs: { app: "", inset: "" }
         },
-        [_c("chat-composer", { on: { messagesent: _vm.addMessage } })],
+        [
+          _c(
+            "v-container",
+            [
+              _c(
+                "v-layout",
+                [
+                  _c(
+                    "v-flex",
+                    { attrs: { xs11: "" } },
+                    [
+                      _c("v-text-field", {
+                        attrs: {
+                          name: "message-input",
+                          label: "Type your message here",
+                          id: "message-input",
+                          disabled: _vm.awaitingConnection,
+                          autofocus: ""
+                        },
+                        on: {
+                          keyup: function($event) {
+                            if (
+                              !("button" in $event) &&
+                              _vm._k($event.keyCode, "enter", 13, $event.key)
+                            ) {
+                              return null
+                            }
+                            _vm.addMessage($event)
+                          }
+                        },
+                        model: {
+                          value: _vm.messageText,
+                          callback: function($$v) {
+                            _vm.messageText = $$v
+                          },
+                          expression: "messageText"
+                        }
+                      })
+                    ],
+                    1
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "v-flex",
+                    {
+                      staticStyle: { "min-width": "100px" },
+                      attrs: { xs1: "", "align-end": "" }
+                    },
+                    [
+                      _c(
+                        "v-btn",
+                        {
+                          attrs: { xs1: "", color: "primary", flat: "" },
+                          on: { click: _vm.addMessage }
+                        },
+                        [
+                          _vm._v("Send  \n                        "),
+                          _c("v-icon", [_vm._v("send")])
+                        ],
+                        1
+                      )
+                    ],
+                    1
+                  )
+                ],
+                1
+              )
+            ],
+            1
+          )
+        ],
         1
       )
     ],
@@ -42284,11 +42444,11 @@ module.exports = {
 //
 
 /* harmony default export */ __webpack_exports__["a"] = ({
-  data: function data() {
-    return {};
-  },
+    data: function data() {
+        return {};
+    },
 
-  props: ["message"]
+    props: ["message"]
 });
 
 /***/ }),
@@ -42404,7 +42564,7 @@ var render = function() {
   return _c("v-card", { staticClass: "chat-message" }, [
     _c("small", { staticClass: "subheading" }, [
       _vm._v(
-        _vm._s(_vm.message.user.name + " " + _vm.message.user.surname) + ":"
+        _vm._s(_vm.message.sender.name + " " + _vm.message.sender.surname) + ":"
       )
     ]),
     _vm._v(" "),
@@ -42569,231 +42729,11 @@ if (false) {
 }
 
 /***/ }),
-/* 105 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-
-/* harmony default export */ __webpack_exports__["a"] = ({
-  data: function data() {
-    return {
-      messageText: ""
-    };
-  },
-
-  methods: {
-    sendMessage: function sendMessage() {
-      this.$emit("messagesent", this.messageText);
-      this.messageText = "";
-    }
-  }
-});
-
-/***/ }),
-/* 106 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__babel_loader_cacheDirectory_true_presets_env_modules_false_targets_browsers_2_uglify_true_plugins_transform_object_rest_spread_transform_runtime_polyfill_false_helpers_false_node_modules_vue_loader_lib_selector_type_script_index_0_ChatComposer_vue__ = __webpack_require__(105);
-/* unused harmony namespace reexport */
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_f155a4dc_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_ChatComposer_vue__ = __webpack_require__(109);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__node_modules_vue_loader_lib_runtime_component_normalizer__ = __webpack_require__(0);
-var disposed = false
-function injectStyle (context) {
-  if (disposed) return
-  __webpack_require__(107)
-}
-/* script */
-
-
-/* template */
-
-/* template functional */
-var __vue_template_functional__ = false
-/* styles */
-var __vue_styles__ = injectStyle
-/* scopeId */
-var __vue_scopeId__ = null
-/* moduleIdentifier (server only) */
-var __vue_module_identifier__ = null
-
-var Component = Object(__WEBPACK_IMPORTED_MODULE_2__node_modules_vue_loader_lib_runtime_component_normalizer__["a" /* default */])(
-  __WEBPACK_IMPORTED_MODULE_0__babel_loader_cacheDirectory_true_presets_env_modules_false_targets_browsers_2_uglify_true_plugins_transform_object_rest_spread_transform_runtime_polyfill_false_helpers_false_node_modules_vue_loader_lib_selector_type_script_index_0_ChatComposer_vue__["a" /* default */],
-  __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_f155a4dc_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_ChatComposer_vue__["a" /* render */],
-  __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_f155a4dc_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_ChatComposer_vue__["b" /* staticRenderFns */],
-  __vue_template_functional__,
-  __vue_styles__,
-  __vue_scopeId__,
-  __vue_module_identifier__
-)
-Component.options.__file = "resources/assets/js/components/utility/ChatComposer.vue"
-
-/* hot reload */
-if (false) {(function () {
-  var hotAPI = require("vue-hot-reload-api")
-  hotAPI.install(require("vue"), false)
-  if (!hotAPI.compatible) return
-  module.hot.accept()
-  if (!module.hot.data) {
-    hotAPI.createRecord("data-v-f155a4dc", Component.options)
-  } else {
-    hotAPI.reload("data-v-f155a4dc", Component.options)
-  }
-  module.hot.dispose(function (data) {
-    disposed = true
-  })
-})()}
-
-/* harmony default export */ __webpack_exports__["a"] = (Component.exports);
-
-
-/***/ }),
-/* 107 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// style-loader: Adds some css to the DOM by adding a <style> tag
-
-// load the styles
-var content = __webpack_require__(108);
-if(typeof content === 'string') content = [[module.i, content, '']];
-if(content.locals) module.exports = content.locals;
-// add the styles to the DOM
-var add = __webpack_require__(73).default
-var update = add("233b2ff2", content, false, {});
-// Hot Module Replacement
-if(false) {
- // When the styles change, update the <style> tags
- if(!content.locals) {
-   module.hot.accept("!!../../../../../node_modules/css-loader/index.js!../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-f155a4dc\",\"scoped\":false,\"sourceMap\":false}!../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./ChatComposer.vue", function() {
-     var newContent = require("!!../../../../../node_modules/css-loader/index.js!../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-f155a4dc\",\"scoped\":false,\"sourceMap\":false}!../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./ChatComposer.vue");
-     if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-     update(newContent);
-   });
- }
- // When the module is disposed, remove the <style> tags
- module.hot.dispose(function() { update(); });
-}
-
-/***/ }),
-/* 108 */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports = module.exports = __webpack_require__(18)(false);
-// imports
-
-
-// module
-exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
-
-// exports
-
-
-/***/ }),
-/* 109 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return render; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return staticRenderFns; });
-var render = function() {
-  var _vm = this
-  var _h = _vm.$createElement
-  var _c = _vm._self._c || _h
-  return _c(
-    "v-container",
-    [
-      _c(
-        "v-layout",
-        [
-          _c(
-            "v-flex",
-            { attrs: { xs11: "" } },
-            [
-              _c("v-text-field", {
-                attrs: {
-                  name: "message-input",
-                  label: "Type your message here",
-                  id: "message-input",
-                  autofocus: ""
-                },
-                on: {
-                  keyup: function($event) {
-                    if (
-                      !("button" in $event) &&
-                      _vm._k($event.keyCode, "enter", 13, $event.key)
-                    ) {
-                      return null
-                    }
-                    _vm.sendMessage($event)
-                  }
-                },
-                model: {
-                  value: _vm.messageText,
-                  callback: function($$v) {
-                    _vm.messageText = $$v
-                  },
-                  expression: "messageText"
-                }
-              })
-            ],
-            1
-          ),
-          _vm._v(" "),
-          _c(
-            "v-flex",
-            {
-              staticStyle: { "min-width": "100px" },
-              attrs: { xs1: "", "align-end": "" }
-            },
-            [
-              _c(
-                "v-btn",
-                {
-                  attrs: { xs1: "", color: "primary", flat: "" },
-                  on: { click: _vm.sendMessage }
-                },
-                [
-                  _vm._v("Send  \n                "),
-                  _c("v-icon", [_vm._v("send")])
-                ],
-                1
-              )
-            ],
-            1
-          )
-        ],
-        1
-      )
-    ],
-    1
-  )
-}
-var staticRenderFns = []
-render._withStripped = true
-
-if (false) {
-  module.hot.accept()
-  if (module.hot.data) {
-    require("vue-hot-reload-api")      .rerender("data-v-f155a4dc", { render: render, staticRenderFns: staticRenderFns })
-  }
-}
-
-/***/ }),
+/* 105 */,
+/* 106 */,
+/* 107 */,
+/* 108 */,
+/* 109 */,
 /* 110 */,
 /* 111 */,
 /* 112 */,

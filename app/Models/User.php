@@ -67,9 +67,16 @@ class User extends Authenticatable implements JWTSubject {
     }
 
     /**
-     * Get the appointments for witch the user is a patient.
+     * Get the messages sent or received as a receptionist.
      */
-    public function messages() {
-        return $this->hasMany('App\Models\Message');
+    public function messagesAsReceptionist() {
+        return $this->hasMany('App\Models\Message', 'receptionist_id');
+    }
+
+    /**
+     * Get the messages sent or received as a patient.
+     */
+    public function messagesAsPatient() {
+        return $this->hasMany('App\Models\Message', 'patient_id');
     }
 }

@@ -1,4 +1,5 @@
 <template>
+    <!-- Try to recreate the layout from here https://codepen.io/anon/pen/bYxpge -->
     <v-container>
         <v-layout row>
             <v-spacer></v-spacer>
@@ -8,7 +9,7 @@
         </v-layout>
         <v-layout row>
             <v-container class="chat-log">
-                <v-card class="chat-message" v-for="(message, index) in messages" :key="`message-${index}`" @click="pickPatient(message)">
+                <v-card class="chat-message" v-for="(message, index) in messages" :key="`message-${index}`" @click="pickPatient(message)" :id="`msg-${message.id}`">
                     <v-layout>
                         <v-flex xs9>
                             <small class="subheading">{{ getSenderName(message) }}:</small>
@@ -59,7 +60,11 @@ export default {
             userChannel: '',
 
             // Other configs
-            chatComposerHeight: "80px"
+            chatComposerHeight: "80px",
+            scrollTarget: '',
+            duration: 300,
+            offset: 0,
+            easing: 'easeInOutCubic'
         };
     },
     created() {
@@ -88,16 +93,6 @@ export default {
             this.fetchRequests();
         }
         this.joinPairingChannel();
-        // this.Echo.join("user-4").listen("MessageSent", this.eventReceived);
-    },
-    updated() {
-        // when the messages become updated, we want to scroll to the bottom (maybe only if they are within some amount from the bottom?)
-        if (window.pageYOffset) {
-            console.log(window.pageYOffset)
-            // smooth scroll new message
-            let maxHeight = document.body.offsetHeight - window.innerHeight
-            window.scrollTo(0, maxHeight)
-        }
     },
     methods: {
         // Sending Messages
@@ -105,14 +100,16 @@ export default {
             return message.sender.name + ' ' + message.sender.surname;
         },
         addMessage() {
-            var url = "/messages";
-            if (
-                this.isPatient &&
-                this.messages.length == 0
-            ) {
-                this.requestChat();
-            } else {
-                this.sendPrivateMessage();
+            if (this.messageText) {
+                var url = "/messages";
+                if (
+                    this.isPatient &&
+                    this.messages.length == 0
+                ) {
+                    this.requestChat();
+                } else {
+                    this.sendPrivateMessage();
+                }
             }
         },
         requestChat() {
@@ -157,6 +154,7 @@ export default {
         },
         // Receiving Messages
         eventReceived(e) {
+            this.scrollTarget = '#msg-' + e.message.id;
             this.messages.push(e.message);
             if (this.awaitingConnection) {
                 this.awaitingConnection = false;
@@ -194,9 +192,10 @@ export default {
             this.Echo.join("pairing-channel")
                 .here(users => { })
                 .joining(user => {
-                    console.log(user.name + " " + user.surname + " has entered");
+                    console.log(user.name + " " + user.surname + " has joined");
                 })
                 .leaving(user => {
+                    console.log(user.name + " " + user.surname + " has left");
                     if (this.isReceptionist) {
                         this.messages = this.messages.filter(message => {
                             message.sender_id != user.id
@@ -246,11 +245,27 @@ export default {
                         color: "error"
                     });
                 });
+        },
+        // Utility
+        scrollToEnd: function () {
+            if (this.scrollTarget) {
+                // this.$vuetify.goTo(this.scrollTarget, {
+                this.$vuetify.goTo(9999, {
+                    duration: this.duration,
+                    offset: this.offset,
+                    easing: this.easing
+                });
+            }
         }
     },
     beforeRouteLeave(to, from, next) {
         this.closeChat();
         next();
+    },
+    watch: {
+        messages: function () {
+            this.scrollToEnd();
+        }
     }
 };
 </script>
@@ -265,4 +280,15 @@ export default {
 .chat-message > p {
   margin-bottom: 0.5rem;
 }
+/* html {
+  overflow: hidden;
+}
+.content {
+  max-height: 100vh;
+}
+.chat-log {
+  height: 100%;
+  overflow-y: scroll;
+  backface-visibility: hidden;
+} */
 </style>

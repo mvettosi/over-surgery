@@ -2348,6 +2348,7 @@ function toComment(sourceMap) {
 //
 //
 //
+//
 
 
 /* harmony default export */ __webpack_exports__["a"] = ({
@@ -2369,7 +2370,11 @@ function toComment(sourceMap) {
             userChannel: '',
 
             // Other configs
-            chatComposerHeight: "80px"
+            chatComposerHeight: "80px",
+            scrollTarget: '',
+            duration: 300,
+            offset: 0,
+            easing: 'easeInOutCubic'
         };
     },
     created: function created() {
@@ -2398,16 +2403,6 @@ function toComment(sourceMap) {
             this.fetchRequests();
         }
         this.joinPairingChannel();
-        // this.Echo.join("user-4").listen("MessageSent", this.eventReceived);
-    },
-    updated: function updated() {
-        // when the messages become updated, we want to scroll to the bottom (maybe only if they are within some amount from the bottom?)
-        if (window.pageYOffset) {
-            console.log(window.pageYOffset);
-            // smooth scroll new message
-            var maxHeight = document.body.offsetHeight - window.innerHeight;
-            window.scrollTo(0, maxHeight);
-        }
     },
 
     methods: {
@@ -2416,11 +2411,13 @@ function toComment(sourceMap) {
             return message.sender.name + ' ' + message.sender.surname;
         },
         addMessage: function addMessage() {
-            var url = "/messages";
-            if (this.isPatient && this.messages.length == 0) {
-                this.requestChat();
-            } else {
-                this.sendPrivateMessage();
+            if (this.messageText) {
+                var url = "/messages";
+                if (this.isPatient && this.messages.length == 0) {
+                    this.requestChat();
+                } else {
+                    this.sendPrivateMessage();
+                }
             }
         },
         requestChat: function requestChat() {
@@ -2461,6 +2458,7 @@ function toComment(sourceMap) {
 
         // Receiving Messages
         eventReceived: function eventReceived(e) {
+            this.scrollTarget = '#msg-' + e.message.id;
             this.messages.push(e.message);
             if (this.awaitingConnection) {
                 this.awaitingConnection = false;
@@ -2500,8 +2498,9 @@ function toComment(sourceMap) {
             var _this4 = this;
 
             this.Echo.join("pairing-channel").here(function (users) {}).joining(function (user) {
-                console.log(user.name + " " + user.surname + " has entered");
+                console.log(user.name + " " + user.surname + " has joined");
             }).leaving(function (user) {
+                console.log(user.name + " " + user.surname + " has left");
                 if (_this4.isReceptionist) {
                     _this4.messages = _this4.messages.filter(function (message) {
                         message.sender_id != user.id;
@@ -2547,11 +2546,29 @@ function toComment(sourceMap) {
                     color: "error"
                 });
             });
+        },
+
+        // Utility
+        scrollToEnd: function scrollToEnd() {
+            if (this.scrollTarget) {
+                // this.$vuetify.goTo(this.scrollTarget, {
+                this.$vuetify.goTo(9999, {
+                    duration: this.duration,
+                    offset: this.offset,
+                    easing: this.easing
+                });
+            }
         }
     },
     beforeRouteLeave: function beforeRouteLeave(to, from, next) {
         this.closeChat();
         next();
+    },
+
+    watch: {
+        messages: function messages() {
+            this.scrollToEnd();
+        }
     }
 });
 
@@ -40170,7 +40187,7 @@ exports = module.exports = __webpack_require__(18)(false);
 
 
 // module
-exports.push([module.i, "\n.chat-log .chat-message:nth-child(even) {\n  background-color: #ccc;\n}\n.chat-message {\n  padding: 1rem;\n}\n.chat-message > p {\n  margin-bottom: 0.5rem;\n}\n", ""]);
+exports.push([module.i, "\n.chat-log .chat-message:nth-child(even) {\n  background-color: #ccc;\n}\n.chat-message {\n  padding: 1rem;\n}\n.chat-message > p {\n  margin-bottom: 0.5rem;\n}\n/* html {\n  overflow: hidden;\n}\n.content {\n  max-height: 100vh;\n}\n.chat-log {\n  height: 100%;\n  overflow-y: scroll;\n  backface-visibility: hidden;\n} */\n", ""]);
 
 // exports
 
@@ -40496,6 +40513,7 @@ var render = function() {
                 {
                   key: "message-" + index,
                   staticClass: "chat-message",
+                  attrs: { id: "msg-" + message.id },
                   on: {
                     click: function($event) {
                       _vm.pickPatient(message)

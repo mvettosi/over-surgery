@@ -109,6 +109,13 @@ class MessageController extends Controller {
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, Message $message) {
+        if ($request->input('recipient_id')) {
+            $message->recipient_id = $request->input('recipient_id');
+        }
+        $message->save();
+        return response()->json([
+            'message' => 'The appointment was successfully modified.',
+        ], 200);
     }
 
     /**

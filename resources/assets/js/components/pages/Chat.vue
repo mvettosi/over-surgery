@@ -90,6 +90,15 @@ export default {
         this.joinPairingChannel();
         // this.Echo.join("user-4").listen("MessageSent", this.eventReceived);
     },
+    updated() {
+        // when the messages become updated, we want to scroll to the bottom (maybe only if they are within some amount from the bottom?)
+        if (window.pageYOffset) {
+            console.log(window.pageYOffset)
+            // smooth scroll new message
+            let maxHeight = document.body.offsetHeight - window.innerHeight
+            window.scrollTo(0, maxHeight)
+        }
+    },
     methods: {
         // Sending Messages
         getSenderName(message) {
@@ -156,27 +165,29 @@ export default {
         },
         // Closing chat
         closeChat() {
-            // The request was sent but is being resigned before any receptionist could pick it up
-            if (this.awaitingConnection) {
-                var url = "/messages/" + this.messages[0].id;
-                this.axios
-                    .delete(url)
-                    .then(response => {
-                        this.cleanChatLog();
-                        this.Echo.leave('pairing-channel');
-                        this.joinPairingChannel();
-                    })
-                    .catch(e => {
-                        this.$root.$snackbar.open(e.response.data.message, {
-                            color: "error"
+            if (this.isPatient) {
+                if (this.awaitingConnection) {
+                    // The request was sent but is being resigned before any receptionist could pick it up
+                    var url = "/messages/" + this.messages[0].id;
+                    this.axios
+                        .delete(url)
+                        .catch(e => {
+                            this.$root.$snackbar.open(e.response.data.message, {
+                                color: "error"
+                            });
                         });
-                    });
+                }
+                this.messages = [];
+                this.awaitingConnection = false;
+                this.recipientId = null;
+                this.Echo.leave('pairing-channel');
+                this.Echo.leave(this.userChannel);
+                this.joinPairingChannel();
+            } else if (this.isReceptionist) {
+                this.Echo.leave('user-' + this.recipientId);
+                this.recipientId = null;
+                this.fetchRequests();
             }
-        },
-        cleanChatLog() {
-            this.messages = [];
-            this.awaitingConnection = false;
-            this.Echo.leave(this.userChannel);
         },
         // Joining Channels
         joinPairingChannel() {
@@ -190,6 +201,9 @@ export default {
                         this.messages = this.messages.filter(message => {
                             message.sender_id != user.id
                         });
+                    }
+                    if (user.id == this.recipientId) {
+                        this.closeChat();
                     }
                 })
                 .listen("ChatRequest", e => {
@@ -206,6 +220,16 @@ export default {
                     "MessageSent",
                     this.eventReceived
                 );
+                var url = "/messages/" + message.id;
+                this.axios
+                    .put(url, {
+                        recipient_id: this.$auth.user().id
+                    })
+                    .catch(e => {
+                        this.$root.$snackbar.open(e.response.data.message, {
+                            color: "error"
+                        });
+                    });
             }
         },
         // Fetching Data

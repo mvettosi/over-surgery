@@ -2400,6 +2400,15 @@ function toComment(sourceMap) {
         this.joinPairingChannel();
         // this.Echo.join("user-4").listen("MessageSent", this.eventReceived);
     },
+    updated: function updated() {
+        // when the messages become updated, we want to scroll to the bottom (maybe only if they are within some amount from the bottom?)
+        if (window.pageYOffset) {
+            console.log(window.pageYOffset);
+            // smooth scroll new message
+            var maxHeight = document.body.offsetHeight - window.innerHeight;
+            window.scrollTo(0, maxHeight);
+        }
+    },
 
     methods: {
         // Sending Messages
@@ -2463,24 +2472,27 @@ function toComment(sourceMap) {
         closeChat: function closeChat() {
             var _this3 = this;
 
-            // The request was sent but is being resigned before any receptionist could pick it up
-            if (this.awaitingConnection) {
-                var url = "/messages/" + this.messages[0].id;
-                this.axios.delete(url).then(function (response) {
-                    _this3.cleanChatLog();
-                    _this3.Echo.leave('pairing-channel');
-                    _this3.joinPairingChannel();
-                }).catch(function (e) {
-                    _this3.$root.$snackbar.open(e.response.data.message, {
-                        color: "error"
+            if (this.isPatient) {
+                if (this.awaitingConnection) {
+                    // The request was sent but is being resigned before any receptionist could pick it up
+                    var url = "/messages/" + this.messages[0].id;
+                    this.axios.delete(url).catch(function (e) {
+                        _this3.$root.$snackbar.open(e.response.data.message, {
+                            color: "error"
+                        });
                     });
-                });
+                }
+                this.messages = [];
+                this.awaitingConnection = false;
+                this.recipientId = null;
+                this.Echo.leave('pairing-channel');
+                this.Echo.leave(this.userChannel);
+                this.joinPairingChannel();
+            } else if (this.isReceptionist) {
+                this.Echo.leave('user-' + this.recipientId);
+                this.recipientId = null;
+                this.fetchRequests();
             }
-        },
-        cleanChatLog: function cleanChatLog() {
-            this.messages = [];
-            this.awaitingConnection = false;
-            this.Echo.leave(this.userChannel);
         },
 
         // Joining Channels
@@ -2495,6 +2507,9 @@ function toComment(sourceMap) {
                         message.sender_id != user.id;
                     });
                 }
+                if (user.id == _this4.recipientId) {
+                    _this4.closeChat();
+                }
             }).listen("ChatRequest", function (e) {
                 if (_this4.isReceptionist) {
                     _this4.eventReceived(e);
@@ -2502,23 +2517,33 @@ function toComment(sourceMap) {
             });
         },
         pickPatient: function pickPatient(message) {
+            var _this5 = this;
+
             if (this.isReceptionist && this.recipientId == null) {
                 this.recipientId = message.sender.id;
                 this.messages = [message];
                 this.Echo.private("user-" + message.sender.id).listen("MessageSent", this.eventReceived);
+                var url = "/messages/" + message.id;
+                this.axios.put(url, {
+                    recipient_id: this.$auth.user().id
+                }).catch(function (e) {
+                    _this5.$root.$snackbar.open(e.response.data.message, {
+                        color: "error"
+                    });
+                });
             }
         },
 
         // Fetching Data
         fetchRequests: function fetchRequests() {
-            var _this5 = this;
+            var _this6 = this;
 
             this.messages = [];
             var url = "/messages?requests=true";
             this.axios.get(url).then(function (response) {
-                _this5.messages = response.data;
+                _this6.messages = response.data;
             }).catch(function (e) {
-                _this5.$root.$snackbar.open(e.response.data.message, {
+                _this6.$root.$snackbar.open(e.response.data.message, {
                     color: "error"
                 });
             });

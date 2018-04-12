@@ -53,9 +53,9 @@ class MessageController extends Controller {
         $validations = [
             'message' => 'required',
         ];
-        if ($currentUser->account_type == 'receptionist') {
-            $validations[] = ['recipient_id' => 'required'];
-        }
+        // if ($currentUser->account_type == 'receptionist') {
+        //     $validations[] = ['recipient_id' => 'required'];
+        // }
         $validator = Validator::make($request->all(), $validations);
         if ($validator->fails()) {
             return response()->json([
@@ -70,11 +70,12 @@ class MessageController extends Controller {
         $message->sender_type = $currentUser->account_type;
         $message->save();
 
-        if ($currentUser->account_type == 'patient' && (!$request->receptionist_id || $request->receptionist_id == '')) {
+        $msgTOSend = Message::with('sender')->with('recipient')->find($message->id);
+        if ($currentUser->account_type == 'patient' && (!$request->recipient_id || $request->recipient_id == '')) {
             //Message from patient without recipient: it's a chat request
-            event(new ChatRequest(Message::with('sender')->with('recipient')->find($message->id)));
+            event(new ChatRequest($msgTOSend));
         } else {
-            event(new MessageSent($message));
+            event(new MessageSent($msgTOSend));
         }
 
         return response()->json($message, 200);

@@ -6,10 +6,11 @@ use App\Models\Message;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class MessageSent {
+class MessageSent implements ShouldBroadcast {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public $message;
@@ -29,6 +30,14 @@ class MessageSent {
      * @return \Illuminate\Broadcasting\Channel|array
      */
     public function broadcastOn() {
-        return new PrivateChannel('user-'+$this->message->patient_id);
+        return new PrivateChannel($this->getChannelName());
+    }
+
+    private function getChannelName() {
+        if ($this->message->sender_type == 'patient') {
+            return 'user-' . $this->message->sender_id;
+        } else {
+            return 'user-' . $this->message->recipient_id;
+        }
     }
 }

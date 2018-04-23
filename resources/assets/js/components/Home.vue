@@ -51,34 +51,34 @@
 </template>
 <script>
 export default {
-  data() {
-    return {
-      drawer: true,
-      clipped: false,
-      routes: [],
-      menus: [
-        {
-          title: "Logout"
+    data() {
+        return {
+            drawer: true,
+            clipped: false,
+            routes: [],
+            menus: [
+                {
+                    title: "Logout"
+                }
+            ]
+        };
+    },
+    created() {
+        // this.$router.push("dashboard");
+    },
+    mounted() {
+        this.$root.$confirm = this.$refs.confirm;
+        this.$root.$snackbar = this.$refs.snackbar;
+        this.routes = this.$router.options.routes[3].children;
+    },
+    methods: {
+        menuAction(title) {
+            switch (title) {
+                case "Logout":
+                    this.$auth.logout();
+                    break;
+            }
         }
-      ]
-    };
-  },
-  created() {
-    this.$router.push("chat");
-  },
-  mounted() {
-    this.$root.$confirm = this.$refs.confirm;
-    this.$root.$snackbar = this.$refs.snackbar;
-    this.routes = this.$router.options.routes[3].children;
-  },
-  methods: {
-    menuAction(title) {
-      switch (title) {
-        case "Logout":
-          this.$auth.logout();
-          break;
-      }
     }
-  }
 };
 </script>

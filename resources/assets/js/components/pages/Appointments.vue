@@ -17,7 +17,7 @@
                 <v-menu transition="slide-y-transition" bottom>
                   <v-btn color="primary" slot="activator">Edit</v-btn>
                   <v-list>
-                    <v-list-tile v-for="hours in appointment.doctorAvailableHours" :key="hours.title" @click="editAppointment(appointment.id, appointment.doctor.id, hours.title)">
+                    <v-list-tile v-for="hours in appointment.doctorAvailableHours" :key="`${index}-${hours.title}`" @click="editAppointment(appointment.id, appointment.doctor.id, hours.title)">
                       <v-list-tile-title>{{ hours.title }}</v-list-tile-title>
                     </v-list-tile>
                   </v-list>
@@ -106,9 +106,9 @@ export default {
     confirmDelete(id) {
       this.$root.$confirm
         .open(
-          "Delete appointment",
-          "Are you sure you want to delete this appointment?",
-          { color: "error" }
+        "Delete appointment",
+        "Are you sure you want to delete this appointment?",
+        { color: "error" }
         )
         .then(confirm => {
           if (confirm) {

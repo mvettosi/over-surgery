@@ -55,7 +55,7 @@ class UserController extends Controller {
             } else {
                 $tempResult = $result;
             }
-            
+
             foreach ($tempResult as $user) {
                 $hours = UserController::getAvailableHours($user, $searchDate);
                 if (!empty($hours)) {
@@ -116,7 +116,21 @@ class UserController extends Controller {
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, User $user) {
-        //
+        if ($request->input('old_password') && $request->input('new_password')) {
+            if (password_verify($request->input('old_password'), $user->password)) {
+                $user->password = bcrypt($request->input('new_password'));
+            } else {
+                return response()->json([
+                    'message' => 'Wrong password.',
+                ], 403);
+            }
+            $user->pwd_updated = true;
+            $user->save();
+
+            return response()->json([
+                'message' => 'The password was successfully changed.',
+            ], 200);
+        }
     }
 
     /**
@@ -135,10 +149,10 @@ class UserController extends Controller {
             ->whereDate('start_date', '<=', $searchDate)
             ->whereDate('end_date', '>=', $searchDate)->get();
         $appointments = Appointment::whereDate('start_time', $searchDate->format('Y-m-d'))
-        ->where(function ($query) use ($user) {
-            $query->where('doctor_or_nurse_id', $user->id)
-            ->orWhere('patient_id', Auth::user()->id);
-        })->get();
+            ->where(function ($query) use ($user) {
+                $query->where('doctor_or_nurse_id', $user->id)
+                    ->orWhere('patient_id', Auth::user()->id);
+            })->get();
         $availableHours = [];
         foreach ($schedules as $schedule) {
             $scheduleStart = Carbon::createFromFormat('H:i:s', $schedule->start_time)->hour;

@@ -25,6 +25,8 @@ class DatabaseSchema extends Migration {
             $table->string('document_id')->nullable();
             $table->date('birthdate')->nullable();
             $table->enum('account_type', array('receptionist', 'patient', 'admin', 'doctor', 'nurse'))->nullable();
+            $table->boolean('pwd_updated')->default(false);
+            $table->boolean('is_male')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

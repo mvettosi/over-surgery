@@ -8,15 +8,16 @@ import Vuetify from 'vuetify';
 // Pages
 import App from './App.vue';
 import Home from './components/Home.vue';
-import Register from './components/pages//Register.vue';
-import Login from './components/pages//Login.vue';
-import Dashboard from './components/pages//Dashboard.vue';
-import Availability from './components/pages//Availability.vue';
-import Appointments from './components/pages//Appointments.vue';
-import Prescriptions from './components/pages//Prescriptions.vue';
-import Tests from './components/pages//Tests.vue';
-import Chat from './components/pages//Chat.vue';
-import Calendar from './components/pages//Calendar.vue';
+import Register from './components/pages/Register.vue';
+import Login from './components/pages/Login.vue';
+import Dashboard from './components/pages/Dashboard.vue';
+import Availability from './components/pages/Availability.vue';
+import Appointments from './components/pages/Appointments.vue';
+import Prescriptions from './components/pages/Prescriptions.vue';
+import Tests from './components/pages/Tests.vue';
+import Chat from './components/pages/Chat.vue';
+import Calendar from './components/pages/Calendar.vue';
+import Profile from './components/pages/Profile.vue';
 
 // Utility
 import fullCalendar from 'vue-fullcalendar'
@@ -95,7 +96,7 @@ const router = new VueRouter({
                 name: 'availability',
                 component: Availability,
                 meta: {
-                    icon: "person",
+                    icon: "schedule",
                     title: "Availability",
                     auth: true,
                     roles: [
@@ -143,7 +144,7 @@ const router = new VueRouter({
                 name: 'calendar',
                 component: Calendar,
                 meta: {
-                    icon: "calendar",
+                    icon: "event",
                     title: "Calendar",
                     auth: true,
                     roles: [
@@ -163,13 +164,28 @@ const router = new VueRouter({
                         'receptionist'
                     ]
                 }
+            }, {
+                path: '/profile',
+                name: 'profile',
+                component: Profile,
+                meta: {
+                    icon: "person",
+                    title: "Profile",
+                    auth: true,
+                    roles: [
+                        'patient',
+                        'receptionist'
+                    ]
+                }
             }
         ]
     }]
 });
 router.beforeEach((to, from, next) => {
     let user = JSON.parse(window.localStorage.getItem('auth-user'));
-    if (to.meta.roles && !to.meta.roles.includes(user.account_type)) {
+    if (to.fullPath != '/profile' && to.meta.auth && user && !user.pwd_updated) {
+        next('profile');
+    } else if (to.meta.roles && !to.meta.roles.includes(user.account_type)) {
         switch (user.account_type) {
             case 'patient':
                 next('dashboard');
@@ -178,8 +194,9 @@ router.beforeEach((to, from, next) => {
                 next('calendar');
                 break;
         }
+    } else {
+        next();
     }
-    next();
 });
 Vue.router = router;
 Vue.use(require('@websanova/vue-auth'), {
